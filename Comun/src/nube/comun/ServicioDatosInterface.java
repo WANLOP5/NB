@@ -1,5 +1,5 @@
 package nube.comun;
 
-public class ServicioDatosInterface {
+public interface ServicioDatosInterface {
 
 }

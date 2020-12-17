@@ -1,5 +1,5 @@
 package nube.comun;
 
-public class ServicioDiscoClienteInterface {
+public interface ServicioDiscoClienteInterface {
 
 }

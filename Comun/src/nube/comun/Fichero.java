@@ -13,7 +13,7 @@ public class Fichero implements Serializable{
 	private String nombre;			//Nombre del fichero
 	private long peso;				//Peso del fichero en bytes
 	private long checksum;			//Suma de chequeo de los bytes del fichero
-	private byte[] data;			//Contenido del fichero
+	private byte[] data;			//Contenido 	del fichero
 	
 	public Fichero (String nombre, String propietario)	//constructor
 	{

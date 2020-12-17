@@ -1,5 +1,5 @@
 package nube.comun;
 
-public class ServicioClOperadorInterface {
+public interface ServicioClOperadorInterface {
 
 }
