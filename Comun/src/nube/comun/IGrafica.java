@@ -1,18 +1,22 @@
+/** Clase IGrafica es una interfaz gráfica que brinda métodos para facilitar 
+ * la interacción del programa del Servidor, Cliente y Repositorio con el usuario en la consola.
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.comun;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class IGrafica {
 	// Scanner utilizado para la entrada de datos.
 	private static Scanner entrada;
 	
-	// Constructor que inicializa el Scanner a usar para la interfaz
+	// Constructor que inicializa el Scanner a usar por la interfaz
 	public IGrafica() {
 		entrada = new Scanner(System.in);
 	}
+
 	// Funcion para desplegar un menu, dado su titulo y las opciones a desplegar
 	public static int desplegarMenu(String name, String[] entradas) {
 		int opcionElegida=0; 
