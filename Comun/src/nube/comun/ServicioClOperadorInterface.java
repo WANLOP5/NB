@@ -1,5 +1,9 @@
 package nube.comun;
 
-public interface ServicioClOperadorInterface {
+import java.rmi.Remote;
+
+public interface ServicioClOperadorInterface extends Remote{
+	
+	
 
 }

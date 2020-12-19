@@ -1,5 +1,5 @@
 /** Interfaz Servicio Autenticacion Interface.
- * La interfaz con sus respectivos metodos para registrar,autenticar,desconectar tanto clientes como repositorios.
+ * La interfaz con sus respectivos metodos para registrar y autenticar tanto clientes como repositorios.
  * 
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es
@@ -25,12 +25,6 @@ public interface ServicioAutenticacionInterface extends Remote{
 	
 	// metodo para autenticar un repositorio en el servidor
 	public int autenticarRepositorio(String nombre) throws RemoteException;
-	
-	// metodo para desconectar el cliente pasando el identificador de la sesion
-	public void desconectarCliente(int sesion) throws RemoteException;
-	
-	// metodo para desconectar el repositorio pasando el identificador de la sesion
-	public void desconectarRepositorio(int sesion) throws RemoteException;
 	
 	
 }
