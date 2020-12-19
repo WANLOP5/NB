@@ -16,29 +16,28 @@ public interface ServicioDatosInterface extends Remote {
 	public String listarRepositorios() throws RemoteException;
 	// Devuelve los clientes con sus repositorios
 	public String listarTClientesRepositorios() throws RemoteException;
+	// Devuelve los ficheros de un cliente 
+	public String listarFicherosCliente(int idCliente) throws RemoteException;
 	
 	// Busca un repositorio que esté disponible
-	public int obtenerRepositorioDisponible() throws RemoteException;
+	public int buscarRepositorioDisponible() throws RemoteException;
+	
 	// Busca el repositorio del id de un cliente
 	public int buscarRepositorio(int idCliente) throws RemoteException;
 	// Busca los metadatos de un id de fichero
 	public int buscarMetadatos(int idFichero) throws RemoteException;
 	// Busca el id del cliente con su sesión.
-	public int buscarCliente(int sesionCliente) throws RemoteException;
+	public int buscarIDCliente(int sesionCliente) throws RemoteException;
 	
-	// Autentica un cliente utilizando las tablas correspondientes.
-	public byte autenticarClienteTabla(String nombre, int idCliente) throws RemoteException;
-	// Registrar un cliente utilizando las tablas correspondientes. 
-	public byte registrarClienteTabla(String nombre, int idCliente) throws RemoteException;
-	// Desconecta un cliente eliminando sus datos de las tablas de sesión.
-	public String desconectarClienteTabla(int sesionCliente) throws RemoteException;
+	// Comprueba el cliente en el sistema para autenticarlo
+	public byte comprobarCliente(String nombre, int idCliente) throws RemoteException;
+	// Inserta un cliente nuevo para registrarlo
+	public byte insertarCliente(String nombre, int idCliente) throws RemoteException;
 	
-	// Autentica un repositorio utilizando las tablas correspondientes.
-	public byte autenticarRepositorioTabla(String nombre, int idCliente) throws RemoteException;
-	// Registrar un repositorio utilizando las tablas correspondientes. 
-	public byte registrarRepositorioTabla(String nombre, int idCliente) throws RemoteException;
-	// Desconecta un repositorio eliminando sus datos de las tablas de sesión.
-	public String desconectarRepositorioTabla(int sesionCliente) throws RemoteException;
+	// Comprueba el repositorio en el sistema para autenticalo
+	public byte comprobarRepositorio(String nombre, int idCliente) throws RemoteException;
+	// Inserta un repositorio nuevo para registrarlo
+	public byte insertarRepositorio(String nombre, int idCliente) throws RemoteException;
 	
 	// Agrega un fichero a la lista de ficheros
 	public int insertarFichero(String nombre, int sesionCliente) throws RemoteException;
