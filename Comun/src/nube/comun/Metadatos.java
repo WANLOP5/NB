@@ -1,3 +1,9 @@
+/** Clase metadatos
+ *  Esta clase guarda los datos sobre un fichero.
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.comun;
 
 import java.io.Serializable;

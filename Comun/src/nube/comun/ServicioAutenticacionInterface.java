@@ -1,3 +1,10 @@
+/** Interfaz Servicio Autenticacion Interface.
+ * La interfaz con sus respectivos metodos para registrar,autenticar,desconectar tanto clientes como repositorios.
+ * 
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.comun;
 
 import java.net.MalformedURLException;
