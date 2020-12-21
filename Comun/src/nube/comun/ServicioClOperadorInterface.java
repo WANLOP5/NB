@@ -1,5 +1,5 @@
 /** Interfaz cliente operador 
- *  La interfaz cuenta con dos metodo, subir fichero y borra fichero del repositorio.
+ *  La interfaz cuenta con dos metodos, subir fichero y borra fichero del repositorio.
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es
  */
