@@ -26,24 +26,25 @@ public interface ServicioDatosInterface extends Remote {
 	public int buscarRepositorio(int idCliente) throws RemoteException;
 	// Busca los metadatos de un id de fichero
 	public Metadatos buscarMetadatos(int idFichero) throws RemoteException;
-	// Busca el id del cliente con su sesión.
+	// Busca el id del cliente con su sesionn.
 	public int buscarIDCliente(int sesionCliente) throws RemoteException;
+	// Busca el id del cliente con su sesion.
+	public int buscarIDRepositorio(int sesionRepositorio) throws RemoteException;
 	
-	// Comprueba el cliente en el sistema para autenticarlo
-	public byte comprobarCliente(String nombre, int idCliente) throws RemoteException;
+	public int insertarSesionCliente(String nombre, int idCliente) throws RemoteException;
 	// Inserta un cliente nuevo para registrarlo
-	public byte insertarCliente(String nombre, int idCliente) throws RemoteException;
+	public int insertarCliente(String nombre, int idCliente) throws RemoteException;
 	
-	// Comprueba el repositorio en el sistema para autenticalo
-	public byte comprobarRepositorio(String nombre, int idCliente) throws RemoteException;
+	// Inserta nueva sesion para el repositorio
+	public int insertarSesionRepositorio(String nombre, int idRepositorio) throws RemoteException;
 	// Inserta un repositorio nuevo para registrarlo
-	public byte insertarRepositorio(String nombre, int idCliente) throws RemoteException;
+	public int insertarRepositorio(String nombre, int idCliente) throws RemoteException;
 	
 	// Agrega un fichero a la lista de ficheros
-	public int insertarFichero(String nombre, int sesionCliente) throws RemoteException;
+	public int insertarFichero(String nombre, int idCliente) throws RemoteException;
 	// Elimina un fichero a la lista de ficheros
-	public int eliminarFichero(int idFichero, int sesionCliente) throws RemoteException;
+	public int eliminarFichero(int idFichero, int idCliente) throws RemoteException;
 	// Comprueba si el fichero pertenece al cliente y devuelve sus metadatos
-	public int descargarFichero(int idFichero, int sesionCliente) throws RemoteException;
+	public Metadatos descargarFichero(int idFichero, int idCliente) throws RemoteException;
 	
 }
