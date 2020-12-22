@@ -1,3 +1,9 @@
+/** Clase utilidades
+ * 	esta clase contiene los metodos cambiar CODEBASE,iniciar un registro y tumbar un registro del sistema.
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.comun;
 
 import java.rmi.NoSuchObjectException;
