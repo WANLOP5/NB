@@ -19,14 +19,14 @@ import nube.comun.Fichero;
 import nube.comun.ServicioClOperadorInterface;
 
 //implementacion de la interfaz ServicioClOperadorInterface
-public class ServicioClOperadorImpl extends UnicastRemoteObject 
-implements ServicioClOperadorInterface {
+public class ServicioClOperadorImpl extends UnicastRemoteObject implements ServicioClOperadorInterface {
 	
-	// identificador generado por el eclipse al utilizar la clase UnicastRemoteObject
-		private static final long serialVersionUID = 1L;
 
-	// constructor de la clase implementada ServicioClOperador
-	protected ServicioClOperadorImpl() throws RemoteException {
+	// identificador generado por el eclipse al utilizar la clase UnicastRemoteObject
+	private static final long serialVersionUID = -7480727944970116419L;
+
+	// constructor de la clase ServicioClOperadorImpl
+	public ServicioClOperadorImpl() throws RemoteException {
 		super();
 		
 	}
