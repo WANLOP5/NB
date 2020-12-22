@@ -8,12 +8,12 @@ package nube.comun;
 
 import java.util.Scanner;
 
-public class IGrafica {
+public class IConsola {
 	// Scanner utilizado para la entrada de datos.
 	private static Scanner entrada;
 	
 	// Constructor que inicializa el Scanner a usar por la interfaz
-	public IGrafica() {
+	public IConsola() {
 		entrada = new Scanner(System.in);
 	}
 
