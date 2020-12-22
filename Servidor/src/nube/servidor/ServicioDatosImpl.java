@@ -297,9 +297,9 @@ implements ServicioDatosInterface {
 	}
 	// Elimina un fichero a la lista de ficheros
 	public int eliminarFichero(int idFichero, int idCliente) {
-		int errorPropietario = comprobarFichero(idFichero, idCliente);
+		int errorEliminar = comprobarFichero(idFichero, idCliente);
 		// Comprobar que el fichero pertenece al cliente
-		if(errorPropietario != 0) return errorPropietario;
+		if(errorEliminar != 0) return errorEliminar;
 		
 		// Elimina el id del fichero de la lista del cliente
 		TClienteFicheros.get(idCliente).remove(idFichero);
