@@ -6,7 +6,6 @@
 
 package nube.comun;
 
-import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -19,19 +18,16 @@ public class Utilidades {
 
 	// Añade la ruta de la clase c al codebase
 	public static void cambiarCodeBase(Class<?> c) {
-		String rutaClase = c.getProtectionDomain().getCodeSource()
-					   .getLocation().toString(); // Obtiene la ruta de la clase
+		String ruta = c.getProtectionDomain().getCodeSource()
+						.getLocation().toString();
 		
-		// Obtiene la propiedad del codebase
-		String propiedadRuta = System.getProperty(CODEBASE); 
+		String rutaPropiedad = System.getProperty(CODEBASE);
 		
-		/* Si la propiedad no está vacía concatena la ruta de la clase con el contenido
-		 * que tenía la propiedad */
-		if (propiedadRuta != null && !propiedadRuta.isEmpty()) { 
-			propiedadRuta = propiedadRuta + " " + rutaClase; 
-		} 
+		if(rutaPropiedad != null && !rutaPropiedad.isEmpty()) {
+			ruta = rutaPropiedad + " " + ruta;
+		}
 		
-		System.setProperty(CODEBASE, propiedadRuta);
+		System.setProperty(CODEBASE, ruta);
 	}
 	
 	// Inicia el registro rmi en el sistema.
