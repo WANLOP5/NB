@@ -1,3 +1,11 @@
+/** Implementacion de la interfaz ServicioSrOperadorInterface 
+ *  Esta clase contiene un constructor por defecto y dos metodos bajar fichero para descargar un fichero del repositorio 
+ *  y crear carpeta repositorio.
+ *  
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.repositorio;
 
 import java.io.File;
@@ -28,6 +36,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 		discoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLDiscoCliente);
 	}
 
+	// metodo para descargar un fichero, envia un fichero del repositorio en la URL enviada
 	@Override
 	public void bajarFichero(String Fnombre, int idCliente) throws RemoteException  {
 		
@@ -42,17 +51,23 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 		}
 	}
 
+	
+	/** crea la carpeta del cliente, no creamos carpeta de la repo, ya que no tiene sentido
+	 *  puesto que el servicio Datos es quien conoce la relacion entre repos clientes
+	 *  si hay varias repos registradas nos da igual, incluso si hay varias repos autenticadas
+	 *  a si que las carpetas de los clientes se crean en la carpeta*/
 	@Override
 	public boolean crearCarpetaRepositorio(int idCliente) throws RemoteException {
 			File carpeta = new File(""+idCliente);
-			boolean carpetaCreada = carpeta.mkdir();
+			boolean carpetaCreada = carpeta.mkdir(); // true si se ha creado.
 			
 			if(carpetaCreada) {
-				
-			}else {}
-		return false;
+				System.out.println("la carpeta se ha creado"+ idCliente + "en la ruta" + System.getProperty("user.dir"));
+				Repositorio.listaDeCarpetas.add(""+idCliente);
+			}else {
+				System.out.println("no se ha podido crear la carpeta"+ idCliente +"en la ruta"+ System.getProperty("user.dir"));
+			}
+		return carpetaCreada;
 	}
-	
-	
 	
 }
