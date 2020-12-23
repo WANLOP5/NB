@@ -7,6 +7,11 @@
 
 package nube.servidor;
 
+import java.net.MalformedURLException;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,49 +20,130 @@ import java.rmi.server.ExportException;
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioDatosInterface;
 import nube.comun.ServicioGestorInterface;
+import nube.comun.Utilidades;
 import nube.comun.IConsola;
 
 public class Servidor {
+	// Puerto para los servicios del servidor
 	private static int puertoServidor;
-	private static int puertoRMI;
+	// Registro rmi del servidor
 	private static Registry registroRMI;
-	private static IConsola consola;
-	
-	private ServicioDatosInterface baseDatos;
-	private ServicioAutenticacionInterface autenticador;
-	private ServicioGestorInterface gestor;	
-	
-	public Servidor() {
-		puertoServidor = 9090;
-		puertoRMI = 1099;
-	}
-	
-	public void iniciarRegistro() throws RemoteException {
-		
-		try { // Si el registro no se puede crear se ignora la accion por la excepcion.
-			LocateRegistry.createRegistry(puertoRMI);
-        } catch (ExportException e) {}
 
-		/* Independientemente de si se acaba de crear o ya estaba creado
-		* se localiza en el puerto a utilizar. */
-        registroRMI = LocateRegistry.getRegistry(puertoRMI);
-        
-        
-    }
+	// URLs para los servicios del servidor
+	private static String URLBaseDatos, URLAutenticador, URLGestor;
+	// Objetos para los servicios del servidor.
+	private static ServicioDatosInterface baseDatos;
+	private static ServicioAutenticacionInterface autenticador;
+	private static ServicioGestorInterface gestor;			
+	
+	public static void iniciarBaseDatos() {
+		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);
+		URLBaseDatos = "rmi://localhost:" + puertoServidor + "/baseDatos";
 		
-	public void tumbarRegistro() {
+		try {
+			registroRMI.bind(URLBaseDatos, baseDatos);
+			System.out.println("[+] SERVICIO DE BASE DE DATOS CORRIENDO");
+		} catch (RemoteException | AlreadyBoundException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO LA BASE DE DATOS");
+			System.exit(1);
 		
+		}
 	}
 	
-	public void iniciarServicios() {
+	public static void iniciarAutenticador() {
+		Utilidades.cambiarCodeBase(ServicioAutenticacionInterface.class);
+		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
+		
+		try {
+			registroRMI.bind(URLAutenticador, autenticador);
+			System.out.println("[+] SERVICIO AUTENTICADOR CORRIENDO");
+		} catch (RemoteException | AlreadyBoundException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO AUTENTICADOR");
+			System.exit(1);
+		
+		}
 		
 	}
-	
-	public void tumbarServicios() {
+	public static void iniciarGestor() {
+		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
+		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
 		
+		try {
+			registroRMI.bind(URLGestor, gestor);
+			System.out.println("[+] SERVICIO GESTOR CORRIENDO");
+		} catch (RemoteException | AlreadyBoundException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO GESTOR");
+			System.exit(1);
+		
+		}
+	
+	}
+	
+	public static void tumbarBaseDatos() {
+		try {
+			Naming.unbind(URLBaseDatos);
+			System.out.println("[+] BASE DE DATOS TUMBADA CON EXITO");
+		} catch (RemoteException | NotBoundException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO LA BASE DE DATOS");
+		} 
+	}
+	
+	public static void tumbarAutenticador() {
+		try {
+			Naming.unbind(URLAutenticador);
+			System.out.println("[+] SERVICIO AUTENTICADOR TUMBADO CON EXITO");
+		} catch (RemoteException | NotBoundException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO EL SERVICIO AUTENTICADOR");
+		} 
+	}
+
+	public static void tumbarGestor() {
+		try {
+			Naming.unbind(URLGestor);
+			System.out.println("[+] SERVICIO GESTOR TUMBADO CON EXITO");
+		} catch (RemoteException | NotBoundException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO EL SERVICIO GESTOR");
+			System.exit(1);
+		}  
+	}
+
+	
+	public static void bucleMenuPrincipal() {
+		boolean finalizado = false;
+		
+		do {
+			try {
+				String[] opciones = {"Listar clientes", "Listar repositorios", "Listar parejas cliente-repositorio"};
+				int opcion = IConsola.desplegarMenu("Servidor", opciones);
+				
+				switch(opcion) {
+				case 1: baseDatos.listarClientes(); break;
+				case 2: baseDatos.listarRepositorios(); break;
+				case 3: baseDatos.listarClientesRepositorios(); break;
+				case 4: finalizado = true; break;
+				}
+			} catch(RemoteException e) {
+				System.out.println("(ERROR) CONSULTANDO EL SERVICIO BASE DE DATOS");
+			}
+			
+			
+		} while(!finalizado);
 	}
 	
 	public static void main(String[] args) {
-		new Servidor();
+		registroRMI = Utilidades.iniciarRegistro(puertoServidor);
+		
+		iniciarBaseDatos();
+		iniciarAutenticador();
+		iniciarGestor();
+	
+		bucleMenuPrincipal();
+		
+		tumbarBaseDatos();
+		tumbarAutenticador();
+		tumbarGestor();
+		
+		Utilidades.tumbarRegistro(puertoServidor);
+		System.exit(0);
 	}
 }

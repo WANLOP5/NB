@@ -16,7 +16,6 @@ import java.rmi.server.UnicastRemoteObject;
 public class Utilidades {
 	// Nombre de la propiedad codebase
 	public static final String CODEBASE = "java.rmi.server.codebase";
-	private static int puertoRMI = 1099;
 
 	// Añade la ruta de la clase c al codebase
 	public static void cambiarCodeBase(Class<?> c) {
@@ -36,27 +35,32 @@ public class Utilidades {
 	}
 	
 	// Inicia el registro rmi en el sistema.
-	public static void iniciarRegistro() throws RemoteException {
+	public static Registry iniciarRegistro(int puerto) {
+		Registry registroRMI = null;
 		try {
 			try { // Si el registro no se puede crear se ignora la accion por la excepcion.
-				LocateRegistry.createRegistry(1099);
-	        } catch (ExportException e) {}	    
+				registroRMI = LocateRegistry.createRegistry(puerto);
+	        } catch (ExportException e) {}
+			
+			registroRMI = LocateRegistry.getRegistry(puerto);
 			
 			System.out.println("[+] REGISTRO RMI INICIALIZADO");
 		} catch(Exception e) {
 			System.err.println("(ERROR) NO SE PUDO INICIAR EL REGISTRO RMI");
 			System.exit(1);
 		}
+		
+		return registroRMI;
         
     }
 	
 	// Tumbar el registro rmi del sistema.
-	public static void tumbarRegistro() throws RemoteException {
+	public static void tumbarRegistro(int puerto) {
 		try {
-			Registry registroRMI = LocateRegistry.getRegistry(puertoRMI);
+			Registry registroRMI = LocateRegistry.getRegistry(puerto);
 			UnicastRemoteObject.unexportObject(registroRMI, true);
 			System.out.println("[+] REGISTRO RMI TUMBADO");
-		} catch (NoSuchObjectException e) {
+		} catch (RemoteException e) {
 			System.err.println("(ERROR) NO SE PUDO TUMBAR EL REGISTRO RMI");
 			System.exit(1);
 		}
