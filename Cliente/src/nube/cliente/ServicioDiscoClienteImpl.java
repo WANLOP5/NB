@@ -14,8 +14,9 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import nube.comun.Fichero;
+import nube.comun.ServicioDiscoClienteInterface;
 
-public class ServicioDiscoClienteImpl extends UnicastRemoteObject {
+public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements ServicioDiscoClienteInterface {
 
 	// identificador generado por eclipse al utilizar la clase UnicastRemoteObject
 	private static final long serialVersionUID = 2960530139594587988L;
@@ -27,9 +28,11 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject {
 	}
 
 	// recibe un fichero, el uso es el que explico el profesor en el foro con un ejemplo.
-	public boolean bajarFicheroDisco(Fichero fichero,int identificador) throws RemoteException {
+	@Override
+	public boolean bajarFicheroDisco(String nombreFichero, Fichero fichero) throws RemoteException {
+		
 		OutputStream os;
-		String Fnombre = fichero.obtenerNombre() + "." +identificador; // para saber de que cliente es el fichero.
+		String Fnombre = fichero.obtenerNombre() + "." + nombreFichero; // para saber de que cliente es el fichero.
 		
 		try {
 			os = new FileOutputStream(Fnombre);
@@ -48,5 +51,4 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject {
 		return true;
 		
 	}
-	
 }
