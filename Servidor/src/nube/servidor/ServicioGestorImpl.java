@@ -54,14 +54,13 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public int subirFichero(int idCliente, String nombreFichero) throws RemoteException {
 		int codError = baseDatos.insertarFichero(nombreFichero, idCliente);
 		
-		if(codError == -1) System.out.println("(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
-		else System.out.println("SE HA SUBIDO EL FICHERO A LA BASE DE DATOS");
+		if(codError == -1) System.err.println("(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
 		
 		return codError;
 		
 	}
 	// Inicia la operacion de bajada de fichero y llama al ServicioServidorOperador.
-	public Metadatos bajarFichero(int idFichero, int idCliente) throws RemoteException {
+	public Metadatos bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException {
 		Metadatos mFichero = baseDatos.buscarMetadatos(idFichero);
 		
 		if(mFichero == null) return null;
@@ -76,7 +75,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 			localizarServidorOperador(URLRepositorio);
 			
 			// Baja el fichero con el servidorOperador.
-			servidorOperador.bajarFichero(mFichero.getNombre(), idCliente);
+			servidorOperador.bajarFichero(mFichero.getNombre(), idCliente, URLDiscoCliente);
 			
 			// El Servidor Operador vuelve a la URL original.
 			localizarServidorOperador(URLServidorOperador);

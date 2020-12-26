@@ -117,13 +117,11 @@ implements ServicioDatosInterface {
 	// Devuelve los ficheros de un cliente 
 	public String listarFicherosCliente(int idCliente) {
 		String lista = null;
-		int indice = 1;
 		
 		for(int fichero : TClienteFicheros.get(idCliente)) {
-			String NFichero = buscarMetadatos(fichero).getNombre();
+			String nFichero = buscarMetadatos(fichero).getNombre();
 			
-			lista.concat(indice + ") " + NFichero + "\n");
-			indice++;
+			lista.concat(fichero + ") " + nFichero + "\n");
 		}
 		
 		return lista;

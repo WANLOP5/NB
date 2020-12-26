@@ -38,7 +38,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 
 	// metodo para descargar un fichero, envia un fichero del repositorio en la URL enviada
 	@Override
-	public void bajarFichero(String Fnombre, int idCliente) throws RemoteException  {
+	public void bajarFichero(String Fnombre, int idCliente, String URLDiscoCliente) throws RemoteException  {
 		
 		Fichero fichero = new Fichero(""+idCliente,Fnombre,""+idCliente);
 		

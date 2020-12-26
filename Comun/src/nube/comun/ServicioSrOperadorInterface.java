@@ -13,5 +13,5 @@ public interface ServicioSrOperadorInterface extends Remote{
 	// Crea una carpeta para el cliente en el repositorio.
 	public boolean crearCarpetaRepositorio(int idCliente) throws RemoteException;
 	// Baja un fichero para el cliente. 
-	public void bajarFichero(String nombreFichero, int idCliente) throws RemoteException;
+	public void bajarFichero(String nombreFichero, int idCliente, String URLDiscoCliente) throws RemoteException;
 }
