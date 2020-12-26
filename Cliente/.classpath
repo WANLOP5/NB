@@ -7,5 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Comun/bin"/>
+	<classpathentry kind="lib" path="/Servidor/bin"/>
+	<classpathentry kind="lib" path="/Repositorio/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,12 +1,14 @@
 package nube.cliente;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 
+import nube.comun.Fichero;
 import nube.comun.IConsola;
 import nube.comun.ServicioDatosInterface;
 import nube.comun.ServicioDiscoClienteInterface;
@@ -67,8 +69,12 @@ public class Cliente {
 	}
 	
 	// Localiza el servicio cliente operador en el registro e inicializa el objeto remoto
-	private static void localizarClienteOperador() {
+	private static void localizarClienteOperador(String URLRepositorio) {
 		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador";
+		
+		if(URLRepositorio != null) 
+			URLClienteOperador.concat(URLRepositorio);
+		
 		try {
 			clienteOperador = (ServicioClOperadorImpl) Naming.lookup(URLClienteOperador);
 			System.out.println("[+] SERVICIO CLIENTE OPERADOR LOCALIZADO EN EL REPOSITORIO");
@@ -80,6 +86,7 @@ public class Cliente {
 		}
 		
 	}
+	
 	
 	// Pone a correr el servicio del disco cliente y lo ingresa al registro rmi
 	private static void iniciarDiscoCliente() {
@@ -111,7 +118,7 @@ public class Cliente {
 	
 	// Funcion que contiene bucle que alojara el menu de registro del programa 
 	// hasta que se de por finalizado
-	public static boolean bucleMenuRegistro() {
+	private static boolean bucleMenuRegistro() {
 		boolean finalizado = false, autenticado = false;
 		
 		do {
@@ -132,8 +139,12 @@ public class Cliente {
 				break;
 			case 2: 
 				String nombreAutenticacion = IConsola.pedirDato("NOMBRE");
-				try {
+				try {					
 					idCliente = srautenticador.autenticarCliente(nombreAutenticacion);
+					// Inicializar los datos del cliente con el id retornado
+					nombreCliente = srgestor.buscarNombreCliente(idCliente);
+					idRepositorioCliente = srgestor.buscarRepositorio(idCliente);
+					
 					System.out.println("[+] USUARIO AUTENTICADO");
 				} catch (RemoteException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
@@ -148,47 +159,126 @@ public class Cliente {
 		return autenticado;
 	}
 	
+	private static boolean comprobarFichero(String URIFichero) {		
+		File ficheroDisco = new File(URIFichero);
+				
+		if(ficheroDisco.isDirectory() && !ficheroDisco.exists()) {
+			System.err.println("(ERROR) EL FICHERO NO EXISTE / SE INTENTO SUBIR UNA CARPETA");
+			return false;
+		}
+		
+		return true;
+	}
+	
 	// Funcion que contiene bucle que alojara el menu principal del programa hasta 
 	// que se de por finalizado
 	private static void bucleMenuPrincipal() {
 		boolean finalizado = false;
 		
 		do {
-//			1.- Subir fichero.
-//			2.- Bajar fichero.
-//			3.- Borrar fichero.
-//			4.- Compartir fichero (Opcional).
-//			5.- Listar ficheros.
-//			6.- Listar Clientes del sistema.
-//			7.- Salir.
-		
-			String opciones[] = {""};
+			String opciones[] = {"Subir fichero", "Bajar fichero", "Borrar fichero",
+								"Listar ficheros", "Listar clientes"};
 			int opcion = IConsola.desplegarMenu("Cliente", opciones);
 			
 			switch(opcion) {
 			case 1: 
-				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
-				idRepositorioCliente = srgestor.subirFichero(idCliente, URIFichero);
+				IConsola.limpiarConsola();
 				
-				File ficheroDisco = new File(URIFichero);
-				if(!ficheroDisco.isDirectory() && ficheroDisco.exists()) {
-					System.err.println("(ERROR) EL FICHERO INGRESADO NO EXISTE");
-					break;
+				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
+				String propietario = IConsola.pedirDato("PROPIETARIO DEL FICHERO");
+				
+				comprobarFichero(URIFichero);
+				
+				try {
+					Fichero nuevoFichero = new Fichero(nombreCliente, propietario);
+					if(srgestor.subirFichero(idCliente, URIFichero) != 0) break;
+				
+					// Localizar el repositorio en el cliente operador 
+					localizarClienteOperador("/" + idRepositorioCliente);
+					
+					if(!clienteOperador.subirFichero(nuevoFichero)) {
+						System.err.println("(ERROR) NO SE PUDO SUBIR EL FICHERO");
+						break;
+					}
+					
+					// Asignar el URLClienteOperador predeterminado
+					localizarClienteOperador(null);
+					
+				} catch(RemoteException e) {
+					System.err.println("(ERROR) INESPERADO FUNCIONAMIENTO DE LOS SERVICIOS");
+					System.exit(1);
 				}
-
-			
+				
+				System.out.println("[+] FICHERO SUBIDO AL REPOSITORIO CON EXITO");
+				
 				break;
 			case 2: 
-				srgestor.bajarFichero(idFichero, idCliente); 
+				IConsola.limpiarConsola();
+				
+				try {
+					srgestor.listarFicheros(idCliente);
+					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
+					
+					String URLFicheroDisco = URLDiscoCliente + "/" + idCliente;
+					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLFicheroDisco);
+					
+					if(nombreFichero == null) { 
+						System.err.println("(ERROR) NO SE PUDO BAJAR EL FICHERO");
+						break;
+					}
+					
+					System.out.println("[+] FICHERO "+nombreFichero+" BAJADO CON EXITO");
+					break;
+					
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
+					System.exit(1);
+				}
+				
 				break;
 			case 3: 
-				idRepositorioCliente = srgestor.borrarFichero(idFichero, idCliente); 
+				IConsola.limpiarConsola();
+			
+				try {
+					srgestor.listarFicheros(idCliente);
+					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
+					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
+					String carpetaFichero = "" + idCliente;
+					
+					if(srgestor.borrarFichero(idFichero, idCliente) == -1) break;
+					
+					if(!clienteOperador.borrarFichero(nombreFichero, carpetaFichero)) break;
+					
+					System.out.println("[+] FICHERO CON ID "+idFichero + " BORRADO CON EXITO DE "
+							+ "LA CARPETA DE REPOSITORIO /"+ idCliente);
+					break;
+					
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
+					System.exit(1);
+				}
+				
+				
 				break;
 			case 4: 
-				srgestor.listarFicheros(idCliente); 
+				IConsola.limpiarConsola();
+				
+				try {
+					srgestor.listarFicheros(idCliente);
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
+					System.exit(1);
+				} 
 				break;
 			case 5: 
-				srgestor.listarClientes(); 
+				IConsola.limpiarConsola();
+				
+				try {
+					srgestor.listarClientes();
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
+					System.exit(1);
+				} 
 				break;
 			case 6: finalizado = true; break;
 			}
@@ -208,6 +298,7 @@ public class Cliente {
 		iniciarDiscoCliente();
 		localizarAutenticador();
 		localizarGestor();
+		localizarClienteOperador(null);
 		
 		boolean autenticado = bucleMenuRegistro();
 		if(autenticado) bucleMenuPrincipal();
@@ -217,9 +308,4 @@ public class Cliente {
 		Utilidades.tumbarRegistro(puertoCliente);
 		System.exit(0);
 	}
-
-
-	
-	
-	
 }
