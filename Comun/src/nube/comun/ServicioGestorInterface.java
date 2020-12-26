@@ -26,6 +26,8 @@ public interface ServicioGestorInterface extends Remote {
 	public int buscarRepositorio(int idCliente) throws RemoteException;
 	// Busca el nombre del id de un cliente
 	public String buscarNombreCliente(int idCliente) throws RemoteException;
+	// Busca los metadatos del id de un fichero
+	public Metadatos buscarMetadatos(int idFichero) throws RemoteException;
 	
 	// Lista los clientes del sistema
 	public void listarClientes() throws RemoteException;

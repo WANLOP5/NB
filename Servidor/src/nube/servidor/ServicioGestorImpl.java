@@ -114,6 +114,11 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		return baseDatos.buscarNombreCliente(idCliente);
 	}
 	
+	// Busca los metadatos del id de un fichero
+	public Metadatos buscarMetadatos(int idFichero) throws RemoteException {
+		return baseDatos.buscarMetadatos(idFichero);
+	}
+	
 	// Lista los clientes del sistema
 	public void listarClientes() throws RemoteException {
 		System.out.println(baseDatos.listarClientes());
@@ -131,5 +136,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public void listarFicheros(int idCliente) throws RemoteException {
 		System.out.println(baseDatos.listarFicherosCliente(idCliente));
 	}
+	
+
 
 }
