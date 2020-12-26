@@ -107,6 +107,15 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		return URLBaseDatos + "/" + baseDatos.buscarRepositorio(idCliente);
 	}
 	
+	// Busca un repositorio con el id del cliente
+	public int buscarRepositorio(int idCliente) throws RemoteException{
+		return baseDatos.buscarRepositorio(idCliente);
+	}
+	
+	public String buscarNombreCliente(int idCliente) throws RemoteException {
+		return baseDatos.buscarNombreCliente(idCliente);
+	}
+	
 	// Lista los clientes del sistema
 	public void listarClientes() throws RemoteException {
 		System.out.println(baseDatos.listarClientes());

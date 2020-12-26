@@ -22,6 +22,11 @@ public interface ServicioGestorInterface extends Remote {
 	// Borra un fichero de la base de datos y devuelve el id del repositorio donde se encontraba 
 	public int borrarFichero(int idFichero, int idCliente) throws RemoteException;
 	
+	// Busca el repositorio del id de un cliente
+	public int buscarRepositorio(int idCliente) throws RemoteException;
+	// Busca el nombre del id de un cliente
+	public String buscarNombreCliente(int idCliente) throws RemoteException;
+	
 	// Lista los clientes del sistema
 	public void listarClientes() throws RemoteException;
 	// Lista los repositorios del sistema

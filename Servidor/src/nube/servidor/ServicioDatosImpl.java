@@ -144,6 +144,12 @@ implements ServicioDatosInterface {
 	public int buscarRepositorio(int idCliente) {
 		return TClienteRepositorio.get(idCliente);
 	}
+	
+	// Busca el nombre de un cliente
+	public String buscarNombreCliente(int idCliente) {
+		return TIClienteNCliente.get(idCliente);
+	}
+	
 	// Busca los metadatos de un id de fichero
 	public Metadatos buscarMetadatos(int idFichero) {
 		return TIFicheroMetadatos.get(idFichero);

@@ -24,11 +24,13 @@ public interface ServicioDatosInterface extends Remote {
 	
 	// Busca el repositorio del id de un cliente
 	public int buscarRepositorio(int idCliente) throws RemoteException;
+	// Busca el nombre del id de un cliente
+	public String buscarNombreCliente(int idCliente) throws RemoteException;
 	// Busca los metadatos de un id de fichero
 	public Metadatos buscarMetadatos(int idFichero) throws RemoteException;
 	// Busca el id del cliente con su sesionn.
 	public int buscarIDCliente(int sesionCliente) throws RemoteException;
-	// Busca el id del cliente con su sesion.
+	// Busca el id repositorio con su sesion.
 	public int buscarIDRepositorio(int sesionRepositorio) throws RemoteException;
 	
 	public int insertarSesionCliente(String nombre, int idCliente) throws RemoteException;
