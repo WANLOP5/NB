@@ -60,7 +60,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		
 	}
 	// Inicia la operacion de bajada de fichero y llama al ServicioServidorOperador.
-	public Metadatos bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException {
+	public String bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException {
 		Metadatos mFichero = baseDatos.buscarMetadatos(idFichero);
 		
 		if(mFichero == null) return null;
@@ -84,7 +84,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 			e.printStackTrace();
 		}
 		
-		return mFichero;
+		return mFichero.getNombre();
 		
 		
 	}

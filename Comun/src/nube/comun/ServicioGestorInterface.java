@@ -16,7 +16,7 @@ public interface ServicioGestorInterface extends Remote {
 	* y devuelve el id del repositorio donde se sube */
 	public int subirFichero(int idCliente, String nombreFichero) throws RemoteException;
 	// Inicia la operacion de bajada de fichero y llama al ServicioServidorOperador.
-	public Metadatos bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException;
+	public String bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException;
 	// Devuelve la direccion del repositorio de un cliente
 	public String localizarURLRepositorio(int idCliente) throws RemoteException;
 	// Borra un fichero de la base de datos y devuelve el id del repositorio donde se encontraba 
