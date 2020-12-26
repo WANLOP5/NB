@@ -26,6 +26,8 @@ public interface ServicioGestorInterface extends Remote {
 	public void listarClientes() throws RemoteException;
 	// Lista los repositorios del sistema
 	public void listarRepositorios() throws RemoteException;
-	// Lista los ficheros del cliente
+	// Lista los clientes y sus repositorios
 	public void listarClientesRepositorios() throws RemoteException;
+	// Lista los ficheros del cliente pasado por parametro
+	public void listarFicheros(int idCliente) throws RemoteException;
 }

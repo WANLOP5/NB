@@ -44,8 +44,8 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int autenticarCliente(String nombre) throws RemoteException {
-		int sesionCliente = getSesion();
-		int identificador = baseDatos.insertarSesionCliente(nombre, sesionCliente);
+		int nuevaSesion = getSesion();
+		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
 		switch (identificador) {
 		case -3 : System.out.println("Este cliente"+ nombre + "no esta registrado en el sistema"); 
 		break;
@@ -67,8 +67,8 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int autenticarRepositorio(String nombre) throws RemoteException {
-		int sesionRepositorio = getSesion();
-		int identificador = baseDatos.insertarSesionCliente(nombre, sesionRepositorio);
+		int nuevaSesion = getSesion();
+		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
 		switch(identificador) {
 		case -2 : System.out.println("EL repositorio"+ nombre +"no esta registrado en el sistema");
 		break;
@@ -84,8 +84,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException {
-		int idCliente = getSesion();
-		int identificador = baseDatos.insertarCliente(nombre,idCliente);
+		int identificador = baseDatos.insertarCliente(nombre, getSesion());
 		switch(identificador) {
 		case -2 : System.out.println("El repositorio no esta en linea, no es posible el registro del cliente"+nombre);
 		break;
@@ -103,8 +102,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int registrarRepositorio(String nombre) throws RemoteException {
-		int idRepositorio = getSesion();
-		int identificador = baseDatos.insertarRepositorio(nombre, idRepositorio);
+		int identificador = baseDatos.insertarRepositorio(nombre, getSesion());
 		if(identificador != -1)
 			System.out.println("El repositorio"+ nombre +"se encuentra registrado en el sistema");
 		else

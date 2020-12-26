@@ -115,9 +115,14 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public void listarRepositorios() throws RemoteException {
 		System.out.println(baseDatos.listarRepositorios());
 	}
-	// Lista los ficheros del cliente
+	// Lista los clientes y sus repositorios
 	public void listarClientesRepositorios() throws RemoteException {
 		System.out.println(baseDatos.listarClientesRepositorios());
+	}
+	
+	// Lista los ficheros del cliente pasado por parametro
+	public void listarFicheros(int idCliente) throws RemoteException {
+		System.out.println(baseDatos.listarFicherosCliente(idCliente));
 	}
 
 }

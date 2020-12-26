@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
+import java.rmi.server.UnicastRemoteObject;
 
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioDatosInterface;
@@ -32,19 +33,21 @@ public class Servidor {
 	// URLs para los servicios del servidor
 	private static String URLBaseDatos, URLAutenticador, URLGestor;
 	// Objetos para los servicios del servidor.
-	private static ServicioDatosInterface baseDatos;
-	private static ServicioAutenticacionInterface autenticador;
-	private static ServicioGestorInterface gestor;			
+	private static ServicioDatosImpl baseDatos;
+	private static ServicioAutenticacionImpl autenticador;
+	private static ServicioGestorImpl gestor;			
 	
 	public static void iniciarBaseDatos() {
 		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);
 		URLBaseDatos = "rmi://localhost:" + puertoServidor + "/baseDatos";
 		
-		try {
-			registroRMI.bind(URLBaseDatos, baseDatos);
+		try {			
+			baseDatos = new ServicioDatosImpl();
+			Naming.rebind(URLBaseDatos, baseDatos);
 			System.out.println("[+] SERVICIO DE BASE DE DATOS CORRIENDO");
-		} catch (RemoteException | AlreadyBoundException e) {
+		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO LA BASE DE DATOS");
+			e.printStackTrace();
 			System.exit(1);
 		
 		}
@@ -55,9 +58,10 @@ public class Servidor {
 		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
 		
 		try {
-			registroRMI.bind(URLAutenticador, autenticador);
+			autenticador = new ServicioAutenticacionImpl();
+			Naming.rebind(URLAutenticador, autenticador);
 			System.out.println("[+] SERVICIO AUTENTICADOR CORRIENDO");
-		} catch (RemoteException | AlreadyBoundException e) {
+		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO AUTENTICADOR");
 			System.exit(1);
 		
@@ -69,9 +73,10 @@ public class Servidor {
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
 		
 		try {
-			registroRMI.bind(URLGestor, gestor);
+			gestor = new ServicioGestorImpl();
+			Naming.rebind(URLGestor, gestor);
 			System.out.println("[+] SERVICIO GESTOR CORRIENDO");
-		} catch (RemoteException | AlreadyBoundException e) {
+		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO GESTOR");
 			System.exit(1);
 		
@@ -112,18 +117,14 @@ public class Servidor {
 		boolean finalizado = false;
 		
 		do {
-			try {
-				String[] opciones = {"Listar clientes", "Listar repositorios", "Listar parejas cliente-repositorio"};
-				int opcion = IConsola.desplegarMenu("Servidor", opciones);
-				
-				switch(opcion) {
-				case 1: baseDatos.listarClientes(); break;
-				case 2: baseDatos.listarRepositorios(); break;
-				case 3: baseDatos.listarClientesRepositorios(); break;
-				case 4: finalizado = true; break;
-				}
-			} catch(RemoteException e) {
-				System.out.println("(ERROR) CONSULTANDO EL SERVICIO BASE DE DATOS");
+			String[] opciones = {"Listar clientes", "Listar repositorios", "Listar parejas cliente-repositorio"};
+			int opcion = IConsola.desplegarMenu("Servidor", opciones);
+			
+			switch(opcion) {
+			case 1: baseDatos.listarClientes(); break;
+			case 2: baseDatos.listarRepositorios(); break;
+			case 3: baseDatos.listarClientesRepositorios(); break;
+			case 4: finalizado = true; break;
 			}
 			
 			
@@ -131,6 +132,7 @@ public class Servidor {
 	}
 	
 	public static void main(String[] args) {
+		puertoServidor = 9091;
 		registroRMI = Utilidades.iniciarRegistro(puertoServidor);
 		
 		iniciarBaseDatos();
