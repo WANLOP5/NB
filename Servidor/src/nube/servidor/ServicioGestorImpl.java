@@ -54,10 +54,10 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public int subirFichero(int idCliente, String nombreFichero) throws RemoteException {
 		int codError = baseDatos.insertarFichero(nombreFichero, idCliente);
 		
-		if(codError == -1) System.out.println("(ERROR) Existe un fichero con el mismo nombre");
-		else System.out.println("Se ha subido el fichero a la base de datos");
+		if(codError == -1) System.out.println("(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
+		else System.out.println("SE HA SUBIDO EL FICHERO A LA BASE DE DATOS");
 		
-		return baseDatos.buscarRepositorio(idCliente);
+		return codError;
 		
 	}
 	// Inicia la operacion de bajada de fichero y llama al ServicioServidorOperador.
@@ -94,12 +94,11 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public int borrarFichero(int idFichero, int idCliente) throws RemoteException {
 		int codError = baseDatos.eliminarFichero(idFichero, idCliente);
 		
-		if(codError == -1) System.out.println("(ERROR) El archivo no le pertenece al cliente");
-		else System.out.println("Se ha borrado el fichero con id "+idFichero+
+		if(codError == -1) System.err.println("(ERROR) EL ARCHIVO NO LE PERTENECE AL CLIENTE");
+		else System.out.println("SE HA BORRADO EL FICHERO CON ID"+idFichero+
 				 				" del cliente "+idCliente);
 		
-		return baseDatos.buscarRepositorio(idCliente);
-		
+		return codError;
 	}
 	
 	// Devuelve la direccion del repositorio de un cliente
