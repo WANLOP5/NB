@@ -35,7 +35,11 @@ public class Servidor {
 	// Objetos para los servicios del servidor.
 	private static ServicioDatosImpl baseDatos;
 	private static ServicioAutenticacionImpl autenticador;
-	private static ServicioGestorImpl gestor;			
+	private static ServicioGestorImpl gestor;	
+	// Objetos remotos para los servicios del servidor.
+	private static ServicioDatosInterface baseDatosRemoto;
+	private static ServicioAutenticacionInterface autenticadorRemoto;
+	private static ServicioGestorInterface gestorRemoto;	
 	
 	public static void iniciarBaseDatos() {
 		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);

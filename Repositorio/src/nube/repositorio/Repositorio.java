@@ -99,9 +99,9 @@ public class Repositorio {
 		String r = IConsola.pedirDato("Introduzca nombre del repositorio");
 		sesion = servidor.autenticarCliente(r);
 		switch(sesion) {
-		case -1 : System.out.println("El repositorio"+ r + "no existe en el sistema, registre el repositorio (opcion 1)");
+		case -2 : System.out.println("El repositorio"+ r + "no existe en el sistema, registre el repositorio (opcion 1)");
 		break;
-		case 0 : System.out.println("El repositorio"+ r +"ya esta autenticado");
+		case -1: System.out.println("El repositorio"+ r +"ya esta autenticado");
 		break;
 		default : System.out.println("El repositorio"+ r +"ha sido autenticado correctamente");
 		iniciarServicio(); // corre los servicios servidor-operador y cliente-operador
@@ -175,9 +175,9 @@ public class Repositorio {
 	public void registrar() throws RemoteException{
 		String re = IConsola.pedirDato("introduzca el nombre del repositorio");
 		if(servidor.registrarRepositorio(re) != 0)
-				System.out.println("El repositorio"+ re +"se ha registrado en el sistema correctamente, para autenticar el repositorio (opcion 2)");
+				System.out.println("El repositorio "+ re +" se ha registrado en el sistema correctamente, para autenticar el repositorio (opcion 2)");
 		else
-				System.out.println("El repositorio"+ re +"ya existe en el sistema, para autenticar el repositorio (opcion 2)");
+				System.out.println("El repositorio "+ re +" ya existe en el sistema, para autenticar el repositorio (opcion 2)");
 	}
 
 	// corre el registry
@@ -187,9 +187,9 @@ public class Repositorio {
 			registryServicio.list(); // lanza una excepcion si el registro no existe
 		}catch(RemoteException e){
 			// el registro no es valido en este puerto
-			System.out.println("El registro RMI no se puede localizar en este puerto"+numeroPuertoRMI);
+			System.out.println("El registro RMI no se puede localizar en este puerto "+numeroPuertoRMI);
 			registryServicio = LocateRegistry.createRegistry(numeroPuertoRMI);
-			System.out.println("Registro RMI creado en el puerto"+numeroPuertoRMI);
+			System.out.println("Registro RMI creado en el puerto "+numeroPuertoRMI);
 		}
 		
 	}

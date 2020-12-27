@@ -10,8 +10,11 @@ import java.rmi.registry.Registry;
 
 import nube.comun.Fichero;
 import nube.comun.IConsola;
+import nube.comun.ServicioAutenticacionInterface;
+import nube.comun.ServicioClOperadorInterface;
 import nube.comun.ServicioDatosInterface;
 import nube.comun.ServicioDiscoClienteInterface;
+import nube.comun.ServicioGestorInterface;
 import nube.comun.Utilidades;
 import nube.servidor.ServicioAutenticacionImpl;
 import nube.servidor.ServicioDatosImpl;
@@ -27,10 +30,10 @@ public class Cliente {
 			URLDiscoCliente, URLClienteOperador;
 	
 	// Objetos remotos para localizar los servicios rmi
-	private static ServicioAutenticacionImpl srautenticador;
-	private static ServicioGestorImpl srgestor;
-	private static ServicioDiscoClienteImpl discoCliente;
-	private static ServicioClOperadorImpl clienteOperador;
+	private static ServicioAutenticacionInterface srautenticador;
+	private static ServicioGestorInterface srgestor;
+	private static ServicioDiscoClienteInterface discoCliente;
+	private static ServicioClOperadorInterface clienteOperador;
 	
 	// Objeto de registro rmi
 	private static Registry registroRMI;
@@ -43,7 +46,7 @@ public class Cliente {
 	private static void localizarAutenticador() {
 		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
 		try {
-			srautenticador = (ServicioAutenticacionImpl) Naming.lookup(URLAutenticador);
+			srautenticador = (ServicioAutenticacionInterface) Naming.lookup(URLAutenticador);
 			System.out.println("[+] SERVICIO AUTENTICADOR LOCALIZADO EN EL SERVIDOR");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL AUTENTICADOR");
@@ -57,7 +60,7 @@ public class Cliente {
 	private static void localizarGestor() {
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
 		try {
-			srgestor= (ServicioGestorImpl) Naming.lookup(URLGestor);
+			srgestor= (ServicioGestorInterface) Naming.lookup(URLGestor);
 			System.out.println("[+] SERVICIO GESTOR LOCALIZADO EN EL SERVIDOR");
 			
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
@@ -76,7 +79,7 @@ public class Cliente {
 			URLClienteOperador.concat(URLRepositorio);
 		
 		try {
-			clienteOperador = (ServicioClOperadorImpl) Naming.lookup(URLClienteOperador);
+			clienteOperador = (ServicioClOperadorInterface) Naming.lookup(URLClienteOperador);
 			System.out.println("[+] SERVICIO CLIENTE OPERADOR LOCALIZADO EN EL REPOSITORIO");
 			
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
@@ -268,7 +271,7 @@ public class Cliente {
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);
-				} 
+				}
 				break;
 			case 5: 
 				IConsola.limpiarConsola();

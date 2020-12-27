@@ -47,6 +47,7 @@ public class IConsola {
 		String respuesta=null;
 		System.out.print(dato + ": ");
 		try {
+			entrada = new Scanner(System.in);
 			respuesta = entrada.nextLine();
 		}
 		catch (Exception e) {
