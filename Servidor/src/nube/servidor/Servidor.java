@@ -47,7 +47,6 @@ public class Servidor {
 			System.out.println("[+] SERVICIO DE BASE DE DATOS CORRIENDO");
 		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO LA BASE DE DATOS");
-			e.printStackTrace();
 			System.exit(1);
 		
 		}
@@ -78,6 +77,7 @@ public class Servidor {
 			System.out.println("[+] SERVICIO GESTOR CORRIENDO");
 		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO GESTOR");
+			e.printStackTrace();
 			System.exit(1);
 		
 		}

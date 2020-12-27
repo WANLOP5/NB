@@ -27,8 +27,10 @@ implements ServicioAutenticacionInterface {
 	
 	private static final long serialVersionUID = 8325119378408210655L; // numero serial generado por eclipse
 	private static int sesion = 1; //identificador unico para los clientes y los repositorios
-	private static int puerto = 9090; // numero de puerto para el servicio los servicios de los clientes y los repositorios
+	private static int puerto = 9091; // numero de puerto para el servicio los servicios de los clientes y los repositorios
+	
 	private static ServicioDatosInterface baseDatos; // almacen de datos 
+	
 	
 	// constructor generado por la clase, sirve para buscar en el almacen de datos
 	public ServicioAutenticacionImpl() throws RemoteException, MalformedURLException, NotBoundException {
@@ -37,7 +39,6 @@ implements ServicioAutenticacionInterface {
 		String URLRegistro = "rmi://localhost:" + puerto + "/baseDatos";
 		baseDatos = (ServicioDatosInterface) Naming.lookup(URLRegistro);
 	}
-	
 	/* metodo para autenticar un cliente en el sistema.
 	 * requiere el nombre del cliente que se quiere autenticar en el sistema.
 	 * el identificador del cliente que se haya autenticado. 

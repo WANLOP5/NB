@@ -78,11 +78,19 @@ implements ServicioDatosInterface {
 		
 		TClienteFicheros = new HashMap<Integer, ArrayList<Integer>>();
 		
-		// localizar el ServicioServidorOperador en el rmiregistry
+		// atributos para localizar el ServicioServidorOperador en el rmiregistry
 		puertoSrOperador = 9091; 
 		URLServidorOperador = "rmi://localhost:" + puertoSrOperador + "/servidorOperador";
-		servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URLServidorOperador);
 		
+		
+	}
+	
+	private void localizarServidorOperador() {
+		try {
+			servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URLServidorOperador);
+		} catch(RemoteException | MalformedURLException | NotBoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Devuelve todos los clientes del sistema con sus datos.
@@ -203,6 +211,8 @@ implements ServicioDatosInterface {
 		int idRepositorio = buscarRepositorioAleatorio(); 
 		// Si no hay repositorios entonces devolver -2 como error.
 		if(idRepositorio == 0) return -2;
+		
+		localizarServidorOperador();
 		
 		// Crear la carpeta en el repositorio con el id del cliente.
 		servidorOperador.crearCarpetaRepositorio(idCliente);

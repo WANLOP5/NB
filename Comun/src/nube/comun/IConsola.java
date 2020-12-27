@@ -12,11 +12,6 @@ public class IConsola {
 	// Scanner utilizado para la entrada de datos.
 	private static Scanner entrada;
 	
-	// Constructor que inicializa el Scanner a usar por la interfaz
-	public IConsola() {
-		entrada = new Scanner(System.in);
-	}
-
 	// Funcion para desplegar un menu, dado su titulo y las opciones a desplegar
 	public static int desplegarMenu(String name, String[] entradas) {
 		int opcionElegida=0; 
@@ -29,6 +24,8 @@ public class IConsola {
 		try { 
 			do {  // Pedir opcion al usuario
 				System.out.print("\nElija una de las opciones > ");
+				
+				entrada = new Scanner(System.in);
 				opcionElegida = entrada.nextInt();
 				System.out.print("\n\n");
 				
@@ -36,6 +33,7 @@ public class IConsola {
 		}
 		catch(Exception e){ 
 			System.out.println("\nOcurrio un error eligiendo la opcion.");
+			e.printStackTrace();
 		}
 		return opcionElegida; 
 	}

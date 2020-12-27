@@ -31,14 +31,14 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public ServicioGestorImpl() throws RemoteException, MalformedURLException, NotBoundException { 
 		super();
 	
-		// Localiza el servicio baseDatos
-		puertoBaseDatos = 9090;
+		// Localiza el set= 9091;
+		puertoBaseDatos = 9091;
 		URLBaseDatos = "rmi://localhost:"+puertoBaseDatos+"/baseDatos";
 		localizarBaseDatos(URLBaseDatos);
-		// Localiza el servicio servidorOperador
-		puertoSrOperador = 9090;
+		// Atributos para localizar el servicio servidorOperador
+		puertoSrOperador = 9091;
 		URLServidorOperador = "rmi://localhost:"+puertoSrOperador+"/servidorOperador";
-		localizarServidorOperador(URLServidorOperador);
+		
 	}
 	
 	private void localizarServidorOperador(String URL) throws RemoteException, MalformedURLException, NotBoundException {
