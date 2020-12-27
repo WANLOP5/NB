@@ -6,6 +6,7 @@
 
 package nube.comun;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class IConsola {
@@ -51,8 +52,16 @@ public class IConsola {
 			respuesta = entrada.nextLine();
 		}
 		catch (Exception e) {
-			System.out.println("Ocurrio un error introduciendo datos.");
+			System.out.println("(ERROR) EN LA INTRODUCCION DE LOS DATOS");
 		}
 		return respuesta;
+	}
+	
+	public static void pausar() {
+		System.out.println("[*] PRESIONE ENTER PARA CONTINUAR.. ");
+		try {
+			System.in.read();
+		} catch (IOException e) { e.printStackTrace();}
+		
 	}
 }
