@@ -73,37 +73,34 @@ public class Repositorio {
 			
 			String URLRegistro = autenticador;
 			servidor = (ServicioAutenticacionInterface)Naming.lookup(URLRegistro);
+			int opcion;
 			
-			//menu
-			int opcion = 0;
 			do {
-				opcion = IConsola.desplegarMenu("Acceder a repositorio", new String[] 
-						{"Registra un nuevo repositorio","Autenticar repositorio (acceder)"});
+				String [] opciones = {"Registrar repositorio","Autenticar repositorio"};
+				opcion = IConsola.desplegarMenu("Repositorio", opciones);
 				switch(opcion) {
-				case 1: registrar();
-				break;
-				case 2: autenticar();
-				break;
+				case 1: registrar(); break;
+				case 2: autenticar(); break;
 				}
 			}while(opcion != 3);
 			
 		} catch (ConnectException e) {
-			System.out.println("Error de conexion, el servidor no se encuentra disponible vuelva a intentarlo");
-			String IC = IConsola.pedirDato("pulsa enter para finalizar");
+			System.err.println("(ERROR) NO SE PUDO CONECTAR AL SERVIDOR O NO ESTA DISPONBILE");
+			IConsola.pausar();
 		}
 		
 	}
 	
 	// inicio de autenticacion de un repositorio en el sistema
 	private void autenticar() throws Exception{
-		String r = IConsola.pedirDato("Introduzca nombre del repositorio");
+		String r = IConsola.pedirDato("NOMBRE DE REPOSITORIO");
 		sesion = servidor.autenticarCliente(r);
 		switch(sesion) {
-		case -2 : System.out.println("El repositorio"+ r + "no existe en el sistema, registre el repositorio (opcion 1)");
+		case -2 : System.out.println("(ERROR) EL REPOSITORIO "+ r + " NO ESTA REGISTRADO");
 		break;
-		case -1: System.out.println("El repositorio"+ r +"ya esta autenticado");
+		case -1: System.out.println("(ERROR) EL REPOSITORIO "+ r +" YA ESTA AUTENTICADO");
 		break;
-		default : System.out.println("El repositorio"+ r +"ha sido autenticado correctamente");
+		default : System.out.println("[+] REPOSITORIO "+ r +" AUTENTICADO");
 		iniciarServicio(); // corre los servicios servidor-operador y cliente-operador
 		break;		 
 		}
