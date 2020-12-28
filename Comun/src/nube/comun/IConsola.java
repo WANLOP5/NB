@@ -24,7 +24,7 @@ public class IConsola {
 		}
 		try { 
 			do {  // Pedir opcion al usuario
-				System.out.print("\nElija una de las opciones > ");
+				System.out.print("\nELIJA UNA OPCION > ");
 				
 				entrada = new Scanner(System.in);
 				opcionElegida = entrada.nextInt();
@@ -33,7 +33,7 @@ public class IConsola {
 			} while(opcionElegida < 0 && opcionElegida>entradas.length); // Si la opcion no existe repetir 
 		}
 		catch(Exception e){ 
-			System.out.println("\nOcurrio un error eligiendo la opcion.");
+			System.out.println("\n(ERROR) ELIGIENDO LA OPCION");
 			e.printStackTrace();
 		}
 		return opcionElegida; 
@@ -46,7 +46,7 @@ public class IConsola {
 	// Funcion para pedir un dato (en formato String) desde la consola.
 	public static String pedirDato(String dato) {
 		String respuesta=null;
-		System.out.print(dato + ": ");
+		System.out.print(dato + "> ");
 		try {
 			entrada = new Scanner(System.in);
 			respuesta = entrada.nextLine();

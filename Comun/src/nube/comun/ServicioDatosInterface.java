@@ -32,6 +32,8 @@ public interface ServicioDatosInterface extends Remote {
 	public int buscarIDCliente(int sesionCliente) throws RemoteException;
 	// Busca el id repositorio con su sesion.
 	public int buscarIDRepositorio(int sesionRepositorio) throws RemoteException;
+	// Busca el id del repositorio con su nombre
+	public int buscarIDRepositorio(String nombreRepositorio) throws RemoteException;
 	
 	public int insertarSesionCliente(String nombre, int idCliente) throws RemoteException;
 	// Inserta un cliente nuevo para registrarlo

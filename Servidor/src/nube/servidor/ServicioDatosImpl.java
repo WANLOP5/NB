@@ -104,7 +104,7 @@ implements ServicioDatosInterface {
 	}
 	// Devuelve todos los repositorios del sistema y sus datos.
 	public String listarRepositorios() {
-		String lista = null;
+		String lista = "";
 		TNRepositorioIRepositorio.entrySet().forEach(par->{
 			lista.concat(par + "\n");   
 		 });
@@ -114,7 +114,7 @@ implements ServicioDatosInterface {
 	
 	// Devuelve los clientes con sus repositorios
 	public String listarClientesRepositorios() {
-		String lista = null;
+		String lista = "";
 		TClienteRepositorio.entrySet().forEach(par->{
 		    lista.concat(par + "\n");  
 		});
@@ -124,7 +124,7 @@ implements ServicioDatosInterface {
 	
 	// Devuelve los ficheros de un cliente 
 	public String listarFicherosCliente(int idCliente) {
-		String lista = null;
+		String lista = "";
 		
 		for(int fichero : TClienteFicheros.get(idCliente)) {
 			String nFichero = buscarMetadatos(fichero).getNombre();
@@ -166,7 +166,11 @@ implements ServicioDatosInterface {
 	}
 	// Busca el id del repositorio con su sesionn.
 	public int buscarIDRepositorio(int sesionRepositorio) {
-		return TRepositorioSesion.get(sesionRepositorio);
+		return TSesionRepositorio.get(sesionRepositorio);
+	}
+	// Busca el id del repositorio con su nombre
+	public int buscarIDRepositorio(String nombreRepositorio) {
+		return TNRepositorioIRepositorio.get(nombreRepositorio);
 	}
 	
 	// Comprueba el cliente en el sistema para autenticarlo
@@ -240,8 +244,8 @@ implements ServicioDatosInterface {
 			// Comprueba que el repositorio este registrado en el sistema
 			if(!TNRepositorioIRepositorio.containsKey(nombre)) return -1;
 			// Comprueba que el repositorio no este autenticado en el sistema
-			int idRepositorio = TNClienteICliente.get(nombre);
-			if(!TRepositorioSesion.containsKey(idRepositorio)) return -2;
+			int idRepositorio = TNRepositorioIRepositorio.get(nombre);
+			if(TRepositorioSesion.containsKey(idRepositorio)) return -2;
 		}
 		
 		return 0;
@@ -254,9 +258,9 @@ implements ServicioDatosInterface {
 		int errorInsertar = comprobarRepositorio(nombre, "autenticar");
 		if(errorInsertar != 0) return errorInsertar;
 		
-		int idRepositorio = buscarIDRepositorio(sesion);
-		TClienteSesion.put(idRepositorio, sesion);
-		TClienteSesion.put(sesion, idRepositorio);
+		int idRepositorio = buscarIDRepositorio(nombre);
+		TRepositorioSesion.put(idRepositorio, sesion);
+		TSesionRepositorio.put(sesion, idRepositorio);
 		
 		return idRepositorio;
 	}
