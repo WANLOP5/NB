@@ -48,14 +48,10 @@ implements ServicioAutenticacionInterface {
 		int nuevaSesion = getSesion();
 		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
 		switch (identificador) {
-		case -3 : System.out.println("Este cliente"+ nombre + "no esta registrado en el sistema"); 
-		break;
-		case -2 : System.out.println("el repositorio no esta en linea, se ha cancelado la autenticacion del cliente"+nombre);
-		break;
-		case -1 : System.out.println("Este cliente"+ nombre + "ya esta autenticado en el sistema");
-		break;
-		default : System.out.println("Este cliente"+ nombre + "se ha autenticado en el sistema");
-		break;
+		case -3 : System.err.println("\n(ERROR) EL REPOSITORIO DEL CLIENTE NO ESTA EN LINEA"); break;
+		case -2 : System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " YA ESTA AUTENTICADO"); break;
+		case -1 : System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " NO ESTA REGISTRADO"); break;
+		default : System.out.println("\n[+] "+nombre + " SE HA AUTENTICADO EN EL SISTEMA"); break;
 		}
 		
 		return identificador;
@@ -69,14 +65,8 @@ implements ServicioAutenticacionInterface {
 	@Override
 	public int autenticarRepositorio(String nombre) throws RemoteException {
 		int nuevaSesion = getSesion();
-		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
-		switch(identificador) {
-		case -2 : System.out.println("EL repositorio"+ nombre +"no esta registrado en el sistema");
-		break;
-		case -1 : System.out.println("El repositorio"+ nombre + "ya esta autenticado en el sistema");
-		break;
-		default : System.out.println(" se ha autenticado el repositorio"+nombre+"en el sistema");
-		}
+		int identificador = baseDatos.insertarSesionRepositorio(nombre, nuevaSesion);
+
 		return identificador;
 	}
 
@@ -87,12 +77,9 @@ implements ServicioAutenticacionInterface {
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException {
 		int identificador = baseDatos.insertarCliente(nombre, getSesion());
 		switch(identificador) {
-		case -2 : System.out.println("El repositorio no esta en linea, no es posible el registro del cliente"+nombre);
-		break;
-		case -1: System.out.println("Este cliente "+nombre+"ya esta registrado en el sistema");
-		break;
-		default : System.out.println("Este cliente"+nombre+"se ha registrado en el sistema");
-		break;
+		case -2 : System.err.println("(ERROR) NO HAY REPOSITORIOS EN LINEA PARA "+nombre); break;
+		case -1: System.err.println("\n(ERROR) YA EXISTE UN CLIENTE CON NOMBRE "+nombre); break;
+		default : System.out.println("\n[+] "+nombre+" SE HA REGISTRADO EN EL SISTEMA"); break;
 		}
 		
 		return identificador;
@@ -104,10 +91,7 @@ implements ServicioAutenticacionInterface {
 	@Override
 	public int registrarRepositorio(String nombre) throws RemoteException {
 		int identificador = baseDatos.insertarRepositorio(nombre, getSesion());
-		if(identificador != -1)
-			System.out.println("El repositorio"+ nombre +"se encuentra registrado en el sistema");
-		else
-			System.out.println("No se puede crear dos veces el mismo repositorio"+nombre+"esta operacion ha sido cancelada");
+		
 		return identificador;
 	}
 	

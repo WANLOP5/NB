@@ -95,31 +95,16 @@ implements ServicioDatosInterface {
 	
 	// Devuelve todos los clientes del sistema con sus datos.
 	public String listarClientes() {
-		String lista = null;
-		TNClienteICliente.entrySet().forEach(par->{
-			lista.concat(par + "\n");   
-		 });
-		
-		return lista;
+		return TNClienteICliente.entrySet().toString();
 	}
 	// Devuelve todos los repositorios del sistema y sus datos.
 	public String listarRepositorios() {
-		String lista = "";
-		TNRepositorioIRepositorio.entrySet().forEach(par->{
-			lista.concat(par + "\n");   
-		 });
-		
-		return lista;
+		return TNRepositorioIRepositorio.entrySet().toString();
 	}
 	
 	// Devuelve los clientes con sus repositorios
 	public String listarClientesRepositorios() {
-		String lista = "";
-		TClienteRepositorio.entrySet().forEach(par->{
-		    lista.concat(par + "\n");  
-		});
-		
-		return lista;
+		return TClienteRepositorio.entrySet().toString();	
 	}
 	
 	// Devuelve los ficheros de un cliente 

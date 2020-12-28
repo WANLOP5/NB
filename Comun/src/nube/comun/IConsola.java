@@ -58,7 +58,7 @@ public class IConsola {
 	}
 	
 	public static void pausar() {
-		System.out.println("[*] PRESIONE ENTER PARA CONTINUAR.. ");
+		System.out.println("\n[*] PRESIONE ENTER PARA CONTINUAR.. ");
 		try {
 			System.in.read();
 		} catch (IOException e) { e.printStackTrace();}

@@ -8,15 +8,9 @@
 package nube.servidor;
 
 import java.net.MalformedURLException;
-import java.rmi.AccessException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.ExportException;
-import java.rmi.server.UnicastRemoteObject;
 
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioDatosInterface;
@@ -27,19 +21,12 @@ import nube.comun.IConsola;
 public class Servidor {
 	// Puerto para los servicios del servidor
 	private static int puertoServidor;
-	// Registro rmi del servidor
-	private static Registry registroRMI;
-
 	// URLs para los servicios del servidor
 	private static String URLBaseDatos, URLAutenticador, URLGestor;
 	// Objetos para los servicios del servidor.
 	private static ServicioDatosImpl baseDatos;
 	private static ServicioAutenticacionImpl autenticador;
 	private static ServicioGestorImpl gestor;	
-	// Objetos remotos para los servicios del servidor.
-	private static ServicioDatosInterface baseDatosRemoto;
-	private static ServicioAutenticacionInterface autenticadorRemoto;
-	private static ServicioGestorInterface gestorRemoto;	
 	
 	public static void iniciarBaseDatos() {
 		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);
@@ -71,6 +58,7 @@ public class Servidor {
 		}
 		
 	}
+	
 	public static void iniciarGestor() {
 		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
@@ -125,9 +113,36 @@ public class Servidor {
 			int opcion = IConsola.desplegarMenu("Servidor", opciones);
 			
 			switch(opcion) {
-			case 1: baseDatos.listarClientes(); break;
-			case 2: baseDatos.listarRepositorios(); break;
-			case 3: baseDatos.listarClientesRepositorios(); break;
+			case 1:
+				try {
+					gestor.listarClientes();
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
+				}
+				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
+				break;
+			case 2: 
+				try {
+					gestor.listarRepositorios();
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
+				}
+				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
+				break;
+			case 3: 
+				try {
+					gestor.listarClientesRepositorios();
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
+				} 
+				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
+				break;
 			case 4: finalizado = true; break;
 			}
 			
@@ -137,7 +152,7 @@ public class Servidor {
 	
 	public static void main(String[] args) {
 		puertoServidor = 9091;
-		registroRMI = Utilidades.iniciarRegistro(puertoServidor);
+		Utilidades.iniciarRegistro(puertoServidor);
 		
 		iniciarBaseDatos();
 		iniciarAutenticador();

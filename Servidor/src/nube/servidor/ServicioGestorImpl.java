@@ -60,17 +60,18 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		
 	}
 	// Inicia la operacion de bajada de fichero y llama al ServicioServidorOperador.
-	public String bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) throws RemoteException {
-		Metadatos mFichero = baseDatos.buscarMetadatos(idFichero);
-		
-		if(mFichero == null) return null;
-		
-		// Busca el repositorio del cliente.
-		int repositorioCliente = baseDatos.buscarIDCliente(idCliente);
-		// URL para localizar la carpeta del repositorio.
-		String URLRepositorio = URLServidorOperador+"/"+ repositorioCliente;
+	public String bajarFichero(int idFichero, int idCliente, String URLDiscoCliente) {
+		Metadatos mFichero = null;
 		
 		try {
+			mFichero = baseDatos.buscarMetadatos(idFichero);
+			
+			if(mFichero == null) return null;
+			
+			// Busca el repositorio del cliente.
+			int repositorioCliente = baseDatos.buscarIDCliente(idCliente);
+			// URL para localizar la carpeta del repositorio.
+			String URLRepositorio = URLServidorOperador+"/"+ repositorioCliente;
 			// Localizar la carpeta del repositorio en el servicio servidor operador.
 			localizarServidorOperador(URLRepositorio);
 			

@@ -31,16 +31,22 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 	// constructor de la clase ServicioSrOperadorImpl
 	public ServicioSrOperadorImpl() throws RemoteException, MalformedURLException, NotBoundException {
 		super();
+		// Inicializando datos para localizar el servicio disco cliente
 		puertoDiscocliente = 9092;
 		URLDiscoCliente = "rmi://localhost:" + puertoDiscocliente + "/discoCliente";
-		discoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLDiscoCliente);
 	}
 
 	// metodo para descargar un fichero, envia un fichero del repositorio en la URL enviada
 	@Override
 	public void bajarFichero(String Fnombre, int idCliente, String URLDiscoCliente) throws RemoteException  {
-		
 		Fichero fichero = new Fichero(""+idCliente,Fnombre,""+idCliente);
+		
+		try {
+			discoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLDiscoCliente);
+		} catch (MalformedURLException | NotBoundException e) {
+			System.err.println("(ERROR) NO SE PUDO LOCALIZAR EL SERVICIO DISCO CLIENTE");
+			return;
+		} 
 		
 		if(discoCliente.bajarFicheroDisco(Fnombre,fichero)==false)
 		{
