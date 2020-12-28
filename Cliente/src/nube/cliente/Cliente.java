@@ -131,9 +131,10 @@ public class Cliente {
 			
 			switch(opcion) {
 			case 1: 
-				String nombreRegistro = IConsola.pedirDato("NOMBRE");
 				try {
-					srautenticador.registrarCliente(nombreRegistro);
+					String nombre = IConsola.pedirDato("NOMBRE");
+					
+					srautenticador.registrarCliente(nombre);
 					System.out.println("[+] USUARIO REGISTRADO");
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
@@ -141,9 +142,11 @@ public class Cliente {
 				}
 				break;
 			case 2: 
-				String nombreAutenticacion = IConsola.pedirDato("NOMBRE");
-				try {					
-					idCliente = srautenticador.autenticarCliente(nombreAutenticacion);
+				
+				try {	
+					String nombre = IConsola.pedirDato("NOMBRE");
+					
+					idCliente = srautenticador.autenticarCliente(nombre);
 					// Inicializar los datos del cliente con el id retornado
 					nombreCliente = srgestor.buscarNombreCliente(idCliente);
 					idRepositorioCliente = srgestor.buscarRepositorio(idCliente);

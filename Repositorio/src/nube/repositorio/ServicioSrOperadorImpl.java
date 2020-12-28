@@ -69,7 +69,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 			
 			if(carpetaCreada) {
 				System.out.println("la carpeta se ha creado"+ idCliente + "en la ruta" + System.getProperty("user.dir"));
-				Repositorio.listaDeCarpetas.add(""+idCliente);
+				Repositorio.carpetasRepositorio.add(""+idCliente);
 			}else {
 				System.out.println("no se ha podido crear la carpeta"+ idCliente +"en la ruta"+ System.getProperty("user.dir"));
 			}

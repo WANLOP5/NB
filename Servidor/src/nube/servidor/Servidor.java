@@ -1,5 +1,5 @@
-/** Servidor es el programa principal que contiene el main del Servidor.
- *  Hace uso de sus servicios ya implementados y proporciona la interfaz grafica 
+/** Servidor es la clase principal que contiene el main del servidor.
+ *  Hace uso de sus servicios ya implementados y proporciona la interfaz de consola
  *  para el usuario.
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es		
@@ -28,7 +28,7 @@ public class Servidor {
 	private static ServicioAutenticacionImpl autenticador;
 	private static ServicioGestorImpl gestor;	
 	
-	public static void iniciarBaseDatos() {
+	private static void iniciarBaseDatos() {
 		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);
 		URLBaseDatos = "rmi://localhost:" + puertoServidor + "/baseDatos";
 		
@@ -43,7 +43,7 @@ public class Servidor {
 		}
 	}
 	
-	public static void iniciarAutenticador() {
+	private static void iniciarAutenticador() {
 		Utilidades.cambiarCodeBase(ServicioAutenticacionInterface.class);
 		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
 		
@@ -59,7 +59,7 @@ public class Servidor {
 		
 	}
 	
-	public static void iniciarGestor() {
+	private static void iniciarGestor() {
 		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
 		
@@ -76,7 +76,7 @@ public class Servidor {
 	
 	}
 	
-	public static void tumbarBaseDatos() {
+	private static void tumbarBaseDatos() {
 		try {
 			Naming.unbind(URLBaseDatos);
 			System.out.println("[+] BASE DE DATOS TUMBADA CON EXITO");
@@ -85,7 +85,7 @@ public class Servidor {
 		} 
 	}
 	
-	public static void tumbarAutenticador() {
+	private static void tumbarAutenticador() {
 		try {
 			Naming.unbind(URLAutenticador);
 			System.out.println("[+] SERVICIO AUTENTICADOR TUMBADO CON EXITO");
@@ -94,7 +94,7 @@ public class Servidor {
 		} 
 	}
 
-	public static void tumbarGestor() {
+	private static void tumbarGestor() {
 		try {
 			Naming.unbind(URLGestor);
 			System.out.println("[+] SERVICIO GESTOR TUMBADO CON EXITO");

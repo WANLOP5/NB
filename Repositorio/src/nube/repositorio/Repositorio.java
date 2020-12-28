@@ -13,213 +13,217 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
 import nube.comun.IConsola;
 import nube.comun.ServicioAutenticacionInterface;
+import nube.comun.ServicioClOperadorInterface;
 import nube.comun.ServicioSrOperadorInterface;
 import nube.comun.Utilidades;
 
+import nube.servidor.ServicioAutenticacionImpl;
+
 public class Repositorio {
+	// Lista de carpetas que guarda el repositorio
+	public static List<String> carpetasRepositorio;
 	
-	// lista de carpetas que se crearan en el repositorio
-	public static List<String> listaDeCarpetas;
+	// Puertos para los distintos servicios rmi.
+	private static int puertoRepositorio, puertoServidor;
 	
+	// URLs para los servicios rmi.
+	private static String URLAutenticador, URLClienteOperador, URLServidorOperador;
 	
-	//atributos para buscar en el servicio de autenticacion del servidor
-	private static int sesion = 1;
-	private static int puerto = 9091;
-	private static ServicioAutenticacionInterface servidor;
-	private static String direccion ="localhost";
+	// Objetos para iniciar los servicios del repositorio
+	private static ServicioClOperadorImpl clienteOperador;
+	private static ServicioSrOperadorImpl servidorOperador;
 	
-	//para guardar las URL RMI
-	private static String autenticador;
-	private static String servidorOperador;
-	private static String clienteOperador;
-	
-	//atributos para correr los servicios servidor-operador y cliente-operador
-	private static int puertoDeServicio = 9092;
-	private static Registry registryServicio;
-	private static String direccionServicio = "localhost";
-	
-	//metodo main del repositorio
-	public static void main(String[]args) throws Exception{
-		
-		autenticador = "rmi://" + direccion + ":" + puerto + "/autenticador";
-		servidorOperador = "rmi://" + direccionServicio + ":" + puertoDeServicio + "/servidorOperador/";
-		clienteOperador = "rmi://" + direccionServicio + ":" + puertoDeServicio + "/clienteOperador/";
-	
-		new Repositorio().iniciar();
-		System.exit(0); // finaliza el programa
-	}
+	// Objetos para localizar los servicios del servidor
+	private static ServicioAutenticacionInterface srautenticador;
 
-	// inicializado la tabla de la estructura logica de las carpetas
-	public Repositorio () {
-		super();
-		listaDeCarpetas = new ArrayList<String>();
-	}
 	
-	/* pone en funcionamiento todos los repositorios.
-	 * intentando acceder para registrar o autenticar
-	*/
-	private void iniciar() throws Exception{
-		// si el servidor no esta disponible, se cierra dejando informacion sobre ello
+	// Localiza el servicio autenticador en el registro e inicializa el objeto remoto
+	private static void localizarAutenticador() {
+		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
 		try {
-			
-			String URLRegistro = autenticador;
-			servidor = (ServicioAutenticacionInterface)Naming.lookup(URLRegistro);
-			int opcion;
-			
-			do {
-				String [] opciones = {"Registrar repositorio","Autenticar repositorio"};
-				opcion = IConsola.desplegarMenu("Repositorio", opciones);
-				switch(opcion) {
-				case 1: 
-					registrar(); 
-					IConsola.pausar();
-					IConsola.limpiarConsola();
-					break;
-				case 2: 
-					autenticar(); 
-					IConsola.pausar();
-					IConsola.limpiarConsola();
-					break;
-				}
-			}while(opcion != 3);
-			
-		} catch (ConnectException e) {
-			System.err.println("(ERROR) NO SE PUDO CONECTAR AL SERVIDOR O NO ESTA DISPONBILE");
-			IConsola.pausar();
+			srautenticador = (ServicioAutenticacionInterface) Naming.lookup(URLAutenticador);
+			System.out.println("[+] SERVICIO AUTENTICADOR LOCALIZADO EN EL SERVIDOR");
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL AUTENTICADOR");
+			System.exit(1);
 		}
 		
 	}
 	
-	// inicio de autenticacion de un repositorio en el sistema
-	private void autenticar() throws Exception{
-		String r = IConsola.pedirDato("NOMBRE DE REPOSITORIO");
-		sesion = servidor.autenticarRepositorio(r);
-		switch(sesion) {
-		case -2 : System.err.println("(ERROR) EL REPOSITORIO "+ r + " YA ESTA AUTENTICADO"); break;
-		case -1 : System.err.println("(ERROR) EL REPOSITORIO "+ r +" NO ESTA REGISTRADO"); break;
-		default : 
-			System.out.println("[+] "+r+" SE HA AUTENTICADO EN EL SISTEMA"); 
-			IConsola.pausar();
-			IConsola.limpiarConsola();
-			iniciarServicio(); // corre los servicios servidor-operador y cliente-operador
-			break;
+	// Pone a correr el servicio cliente operador y lo ingresa al registro rmi
+	private static void iniciarClienteOperador() {
+		Utilidades.cambiarCodeBase(ServicioClOperadorInterface.class);
+		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador";
+		
+		try {
+			clienteOperador = new ServicioClOperadorImpl();
+			Naming.rebind(URLClienteOperador, clienteOperador);
+			System.out.println("[+] SERVICIO CLIENTE OPERADOR CORRIENDO");
+		} catch(RemoteException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO CLIENTE OPERADOR");
 		}
 	}
-
-	// corre los servicios del repositorio con su identificador de sesion
-	private void iniciarServicio() throws Exception{
-		
-		String URLRegistro;
-		//metodo iniciarRegistro de la clase utilidades
-		Utilidades.iniciarRegistro(puertoDeServicio);
+	
+	// Pone a correr el servicio servidor operador y lo ingresa al registro rmi
+	private static void iniciarServidorOperador() {
 		Utilidades.cambiarCodeBase(ServicioSrOperadorInterface.class);
+		URLServidorOperador = "rmi://localhost:" + puertoRepositorio + "/servidorOperador";
 		
-		// correr servidorOperador en servidorOperador
-		ServicioSrOperadorImpl ObjSerOperador = new ServicioSrOperadorImpl();
-		URLRegistro = servidorOperador + sesion; // RMI
-		Naming.rebind(URLRegistro, ObjSerOperador);
-		System.out.println("[+] SERVICIO SERVIDOR OPERADOR CORRIENDO");
+		try {
+			servidorOperador = new ServicioSrOperadorImpl();
+			Naming.rebind(URLServidorOperador, servidorOperador);
+			System.out.println("[+] SERVICIO SERVIDOR OPERADOR CORRIENDO");
+		} catch(RemoteException | MalformedURLException | NotBoundException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO SERVIDOR OPERADOR");
+			System.exit(1);
+		}
+	}
+	
+	// Tumba el servicio cliente operador y lo saca del registro rmi
+	private static void tumbarClienteOperador() {
+		try {
+			Naming.unbind(URLClienteOperador);
+			System.out.println("[+] CLIENTE OPERADOR TUMBADO CON EXITO");
+		} catch (RemoteException | NotBoundException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO EL SERVICIO CLIENTE OPERADOR");
+		}
+	}
+	
+	// Tumba el servicio servidor operador y lo saca del registro rmi
+	private static void tumbarServidorOperador() {
+		try {
+			Naming.unbind(URLServidorOperador);
+			System.out.println("[+] SERVIDOR OPERADOR TUMBADO CON EXITO");
+		} catch (RemoteException | NotBoundException | MalformedURLException e) {
+			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO EL SERVICIO SERVIDOR OPERADOR");
+		}
+	}
+	
+	// Funcion que contiene bucle que alojara el menu de registro del programa 
+	// hasta que se de por finalizado
+	private static boolean bucleMenuRegistro() {
+		boolean finalizado = false, autenticado = false;
 		
-		//correr clienteOperador en clienteOPerador
-		ServicioClOperadorImpl ObjSerClienteOperador = new ServicioClOperadorImpl();
-		URLRegistro = clienteOperador + sesion;//RMI
-		Naming.rebind(URLRegistro, ObjSerClienteOperador);
-		System.out.println("[+] SERVIDOR CLIENTE OPERADOR CORRIENDO");
-		
-		//menu una vez autenticado el servicio
-		int opcion = 0;
 		do {
-			opcion = IConsola.desplegarMenu("Repositorio", new String[] 
-					{"Lista clientes","Listar ficheros de los clientes"});
+			String opciones[] = {"Registrar un nuevo usuario", "Autenticarse en el sistema", 
+								"Salir"};
+			int opcion = IConsola.desplegarMenu("Repositorio", opciones);
+			
+			switch(opcion) {
+			case 1:
+				try {
+					String nombre = IConsola.pedirDato("NOMBRE DE REPOSITORIO");
+					int idRepositorio = srautenticador.registrarRepositorio(nombre);
+					
+					if(idRepositorio != -1)
+						System.out.println("[+] "+nombre+" SE HA REGISTRADO EN EL SISTEMA");
+					else
+						System.err.println("(ERROR) YA EXISTE UN REPOSITORIO CON NOMBRE "+nombre);
+						IConsola.pausar();
+						IConsola.limpiarConsola();
+				} catch (RemoteException e) {
+					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
+					System.exit(1);
+				}
+				
+				break;
+			case 2:
+				try {	
+					String nombre = IConsola.pedirDato("NOMBRE");
+					int idRepositorio = srautenticador.autenticarRepositorio(nombre);
+					
+					switch(idRepositorio) {
+					case -2 : 
+						System.err.println("(ERROR) EL REPOSITORIO "+ nombre + " YA ESTA AUTENTICADO"); 
+						break;
+					case -1 : 
+						System.err.println("(ERROR) EL REPOSITORIO "+ nombre +" NO ESTA REGISTRADO"); 
+						break;
+					default : 
+						System.out.println("[+] "+nombre+" SE HA AUTENTICADO EN EL SISTEMA"); 
+						autenticado = true;
+						IConsola.pausar();
+						IConsola.limpiarConsola();
+						break;
+					}
+				} catch (RemoteException e) {
+					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
+					System.exit(1);
+				}				
+			case 3: finalizado = true; break;
+				
+			}
+		
+		} while(finalizado == false);
+		return autenticado;
+	}
+	
+	// Funcion que contiene el bucleque alojara el menu principal del programa hasta que 
+	// se de por finalizado
+	private static void bucleMenuPrincipal() {
+		boolean finalizado = false;
+		
+		do {
+			String[] opciones = {"Lista clientes","Listar ficheros de los clientes", "Salir"};
+			int opcion = IConsola.desplegarMenu("Repositorio", opciones);
+			
 			switch(opcion) {
 			case 1 : 
-				listarClientes();
+				System.out.println(carpetasRepositorio);
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
 			case 2 : 
-				listarFicherosClientes();
+				if(carpetasRepositorio.isEmpty()) {
+					System.out.println("[+] NO HAY CARPETAS");
+				}else {
+					System.out.println(carpetasRepositorio);
+					String carpeta = IConsola.pedirDato("NOMBRE DE CARPETA");
+					
+					File carpetaDisco = new File(carpeta);
+					if(carpetaDisco.exists()) {
+						String[] ficheros = carpetaDisco.list();
+						for(String s : ficheros) System.out.println(s);
+					}else {
+						System.err.println("(ERROR) LA CARPETA NO EXISTE");
+					}
+				}
+				
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
 			}
-		}while(opcion !=3);
-		
-		try{
-			// eliminar servidor-Operador
-			URLRegistro = servidorOperador + sesion; // RMI
-			Naming.unbind(URLRegistro);
-			System.out.println("[+] SERVICIO SERVIDOR OPERADOR TUMBADO");
-			
-			// eliminar cliente-operador
-			URLRegistro = clienteOperador + sesion; // RMI
-			Naming.unbind(URLRegistro);
-			System.out.println("[+] SERVICIO CLIENTE OPERADOR TUMBADO");
-			
-			// cerrar RMIRegistry del objeto registry unico
-			if(RegistryEstaVacio(clienteOperador)) { //RMI
-				UnicastRemoteObject.unexportObject(registryServicio, true); // true aunque hayan cosas pendientes, false solo si no hay pendientes. 
-				System.out.println("[+] REGISTRO RMI CERRADO");
-			}else 
-				System.out.println("La operacion registry todavia esta abierta aun quedan repositorios conectados");
-			
-		}catch(NoSuchObjectException e) {
-			System.err.println("(ERROR) NO SE PUDO CERRAR EL REGISTRO RMI");
-		}
-		
-		sesion =0;
-		
+		} while(!finalizado);		
 	}
 	
-	// Registra un repositorio en el sistema
-	public void registrar() throws RemoteException{
-		String re = IConsola.pedirDato("NOMBRE DE REPOSITORIO");
-
-		if(servidor.registrarRepositorio(re) != -1)
-			System.out.println("[+] "+re+" SE HA REGISTRADO EN EL SISTEMA");
-		else
-			System.err.println("(ERROR) YA EXISTE UN REPOSITORIO CON NOMBRE "+re);
-	}
-
-	
-	// metodo que imprime la lista de ficheros de los cliente
-	private void listarFicherosClientes() {
-		if(listaDeCarpetas.isEmpty()) {
-			System.out.println("[+] NO HAY CARPETAS");
-		}else {
-			listarClientes();
-			String carpeta = IConsola.pedirDato("NOMBRE DE CARPETA");
-			File dir = new File(carpeta);
-			if(dir.exists()) {
-				String[] ficheros = dir.list();
-				for(String s : ficheros) System.out.println(s);
-			}else {
-				System.out.println("(ERROR) LA CARPETA NO EXISTE");
-			}
-		}
-	}
-	
-	// metodo que imprime la lista de carpetas, los identificadores de los clientes que mantiene en la estructura logica listaDeCarpetas
-	private void listarClientes() {
-		System.out.println(listaDeCarpetas);
-	}
+	public static void main(String [] args) {
+		// Inicializando la lista de carpetas
+		carpetasRepositorio = new ArrayList<String>();
 		
-	// metodo para comprobar si esta vacia la lista de los servicios de la URL
-	private static boolean RegistryEstaVacio(String URL) throws RemoteException, MalformedURLException{
-		String[] names = Naming.list(URL);
-		if(names.length == 0) 
-			return true;
-		else
-			return false;
-			
+		// Inicializando los puertos de los distintos servicios.
+		puertoServidor = 9091;
+		puertoRepositorio = 9092;
+		
+		Utilidades.iniciarRegistro(puertoRepositorio);
+		
+		iniciarClienteOperador();
+		iniciarServidorOperador();
+		localizarAutenticador();
+		
+		boolean autenticado = bucleMenuRegistro();
+		if(autenticado) bucleMenuPrincipal();
+		
+		tumbarClienteOperador();
+		tumbarServidorOperador();
+		
+		Utilidades.tumbarRegistro(puertoRepositorio);
+		System.exit(0);
 	}
 }
