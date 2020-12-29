@@ -15,6 +15,7 @@ import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,9 @@ public class Repositorio {
 	
 	// Objetos para localizar los servicios del servidor
 	private static ServicioAutenticacionInterface srautenticador;
-
+	
+	// ID del repositorio autenticado
+	private static int idRepositorio;
 	
 	// Localiza el servicio autenticador en el registro e inicializa el objeto remoto
 	private static void localizarAutenticador() {
@@ -60,7 +63,7 @@ public class Repositorio {
 	// Pone a correr el servicio cliente operador y lo ingresa al registro rmi
 	private static void iniciarClienteOperador() {
 		Utilidades.cambiarCodeBase(ServicioClOperadorInterface.class);
-		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador";
+		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador/" + idRepositorio;
 		
 		try {
 			clienteOperador = new ServicioClOperadorImpl();
@@ -74,7 +77,7 @@ public class Repositorio {
 	// Pone a correr el servicio servidor operador y lo ingresa al registro rmi
 	private static void iniciarServidorOperador() {
 		Utilidades.cambiarCodeBase(ServicioSrOperadorInterface.class);
-		URLServidorOperador = "rmi://localhost:" + puertoRepositorio + "/servidorOperador";
+		URLServidorOperador = "rmi://localhost:" + puertoRepositorio + "/servidorOperador/" + idRepositorio;
 		
 		try {
 			servidorOperador = new ServicioSrOperadorImpl();
@@ -112,17 +115,15 @@ public class Repositorio {
 		boolean finalizado = false, autenticado = false;
 		
 		do {
-			String opciones[] = {"Registrar un nuevo usuario", "Autenticarse en el sistema", 
-								"Salir"};
+			String opciones[] = {"Registrar un nuevo usuario", "Autenticarse en el sistema"};
 			int opcion = IConsola.desplegarMenu("Repositorio", opciones);
 			
 			switch(opcion) {
 			case 1:
 				try {
-					String nombre = IConsola.pedirDato("NOMBRE DE REPOSITORIO");
-					int idRepositorio = srautenticador.registrarRepositorio(nombre);
+					String nombre = IConsola.pedirDato("NOMBRE");
 					
-					if(idRepositorio != -1)
+					if(srautenticador.registrarRepositorio(nombre) != -1)
 						System.out.println("[+] "+nombre+" SE HA REGISTRADO EN EL SISTEMA");
 					else
 						System.err.println("(ERROR) YA EXISTE UN REPOSITORIO CON NOMBRE "+nombre);
@@ -137,7 +138,7 @@ public class Repositorio {
 			case 2:
 				try {	
 					String nombre = IConsola.pedirDato("NOMBRE");
-					int idRepositorio = srautenticador.autenticarRepositorio(nombre);
+					idRepositorio = srautenticador.autenticarRepositorio(nombre);
 					
 					switch(idRepositorio) {
 					case -2 : 
@@ -149,6 +150,7 @@ public class Repositorio {
 					default : 
 						System.out.println("[+] "+nombre+" SE HA AUTENTICADO EN EL SISTEMA"); 
 						autenticado = true;
+						finalizado = true;
 						IConsola.pausar();
 						IConsola.limpiarConsola();
 						break;
@@ -157,8 +159,6 @@ public class Repositorio {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
 					System.exit(1);
 				}				
-			case 3: finalizado = true; break;
-				
 			}
 		
 		} while(finalizado == false);
@@ -171,7 +171,7 @@ public class Repositorio {
 		boolean finalizado = false;
 		
 		do {
-			String[] opciones = {"Lista clientes","Listar ficheros de los clientes", "Salir"};
+			String[] opciones = {"Listar clientes","Listar ficheros de los clientes", "Salir"};
 			int opcion = IConsola.desplegarMenu("Repositorio", opciones);
 			
 			switch(opcion) {
@@ -199,7 +199,8 @@ public class Repositorio {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
-			}
+			case 3: finalizado = true; break;
+			} 
 		} while(!finalizado);		
 	}
 	
@@ -211,19 +212,20 @@ public class Repositorio {
 		puertoServidor = 9091;
 		puertoRepositorio = 9092;
 		
-		Utilidades.iniciarRegistro(puertoRepositorio);
+		localizarAutenticador();
+		boolean autenticado = bucleMenuRegistro();
+		
+		Registry registroRMI = Utilidades.iniciarRegistro(puertoRepositorio);
 		
 		iniciarClienteOperador();
 		iniciarServidorOperador();
-		localizarAutenticador();
 		
-		boolean autenticado = bucleMenuRegistro();
 		if(autenticado) bucleMenuPrincipal();
 		
 		tumbarClienteOperador();
 		tumbarServidorOperador();
 		
-		Utilidades.tumbarRegistro(puertoRepositorio);
+		Utilidades.tumbarRegistro(registroRMI);
 		System.exit(0);
 	}
 }

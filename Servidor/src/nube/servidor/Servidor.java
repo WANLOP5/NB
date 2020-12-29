@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioDatosInterface;
@@ -109,7 +110,8 @@ public class Servidor {
 		boolean finalizado = false;
 		
 		do {
-			String[] opciones = {"Listar clientes", "Listar repositorios", "Listar parejas cliente-repositorio"};
+			String[] opciones = {"Listar clientes", "Listar repositorios", 
+					"Listar parejas cliente-repositorio", "Salir"};
 			int opcion = IConsola.desplegarMenu("Servidor", opciones);
 			
 			switch(opcion) {
@@ -152,7 +154,7 @@ public class Servidor {
 	
 	public static void main(String[] args) {
 		puertoServidor = 9091;
-		Utilidades.iniciarRegistro(puertoServidor);
+		Registry registroRMI = Utilidades.iniciarRegistro(puertoServidor);
 		
 		iniciarBaseDatos();
 		iniciarAutenticador();
@@ -164,7 +166,7 @@ public class Servidor {
 		tumbarAutenticador();
 		tumbarGestor();
 		
-		Utilidades.tumbarRegistro(puertoServidor);
+		Utilidades.tumbarRegistro(registroRMI);
 		System.exit(0);
 	}
 }

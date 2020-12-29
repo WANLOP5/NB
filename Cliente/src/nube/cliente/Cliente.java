@@ -29,14 +29,16 @@ public class Cliente {
 	private static String URLAutenticador, URLGestor, 
 			URLDiscoCliente, URLClienteOperador;
 	
-	// Objetos remotos para localizar los servicios rmi
+	// Objetos remotos para localizar los servicios rmi del servidor
 	private static ServicioAutenticacionInterface srautenticador;
 	private static ServicioGestorInterface srgestor;
-	private static ServicioDiscoClienteInterface discoCliente;
+	
+	// Objetos remotos para localizar lo servicios rmi del repositorio
 	private static ServicioClOperadorInterface clienteOperador;
 	
-	// Objeto de registro rmi
-	private static Registry registroRMI;
+	// Objetos remotos para iniciar los servicios del cliente
+	private static ServicioDiscoClienteImpl discoCliente;
+	
 	
 	// Datos de este cliente
 	private static String nombreCliente;
@@ -183,7 +185,7 @@ public class Cliente {
 		
 		do {
 			String opciones[] = {"Subir fichero", "Bajar fichero", "Borrar fichero",
-								"Listar ficheros", "Listar clientes"};
+								"Listar ficheros", "Listar clientes", "Salir"};
 			int opcion = IConsola.desplegarMenu("Cliente", opciones);
 			
 			switch(opcion) {
@@ -299,19 +301,20 @@ public class Cliente {
 		puertoRepositorio = 9092;
 		puertoCliente = 9093;
 		
-		registroRMI = Utilidades.iniciarRegistro(puertoCliente);
+		localizarAutenticador();
+		boolean autenticado = bucleMenuRegistro();
+		
+		Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
 			
 		iniciarDiscoCliente();
-		localizarAutenticador();
 		localizarGestor();
 		localizarClienteOperador(null);
 		
-		boolean autenticado = bucleMenuRegistro();
 		if(autenticado) bucleMenuPrincipal();
 		
 		tumbarDiscoCliente();
 		
-		Utilidades.tumbarRegistro(puertoCliente);
+		Utilidades.tumbarRegistro(registroRMI);
 		System.exit(0);
 	}
 }

@@ -85,7 +85,12 @@ implements ServicioDatosInterface {
 		
 	}
 	
-	private void localizarServidorOperador() {
+	private void localizarServidorOperador(String URLRepositorio) {
+		URLServidorOperador = "rmi://localhost:" + puertoSrOperador + "/clienteOperador";
+		
+		if(URLRepositorio != null) 
+			URLServidorOperador.concat(URLRepositorio);
+		
 		try {
 			servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URLServidorOperador);
 		} catch(RemoteException | MalformedURLException | NotBoundException e) {
@@ -201,7 +206,7 @@ implements ServicioDatosInterface {
 		// Si no hay repositorios entonces devolver -2 como error.
 		if(idRepositorio == 0) return -2;
 		
-		localizarServidorOperador();
+		localizarServidorOperador("/" + idRepositorio);
 		
 		// Crear la carpeta en el repositorio con el id del cliente.
 		servidorOperador.crearCarpetaRepositorio(idCliente);

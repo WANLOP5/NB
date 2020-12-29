@@ -6,15 +6,19 @@
 
 package nube.comun;
 
+import java.net.BindException;
+import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
-public class Utilidades {
+public class Utilidades {	
 	// Nombre de la propiedad codebase
-	public static final String CODEBASE = "java.rmi.server.codebase";
+	private static final String CODEBASE = "java.rmi.server.codebase";
 
 	// Añade la ruta de la clase c al codebase
 	public static void cambiarCodeBase(Class<?> c) {
@@ -33,31 +37,32 @@ public class Utilidades {
 	// Inicia el registro rmi en el sistema.
 	public static Registry iniciarRegistro(int puerto) {
 		Registry registroRMI = null;
-		try {
-			try { // Si el registro no se puede crear se ignora la accion por la excepcion.
-				registroRMI = LocateRegistry.createRegistry(puerto);
-	        } catch (ExportException e) {}
-			
-			registroRMI = LocateRegistry.getRegistry(puerto);
-			
-			System.out.println("[+] REGISTRO RMI INICIALIZADO");
-		} catch(Exception e) {
-			System.err.println("(ERROR) NO SE PUDO INICIAR EL REGISTRO RMI");
-			System.exit(1);
-		}
+		
+		try { 
+			registroRMI = LocateRegistry.createRegistry(puerto);
+	    
+		} catch (RemoteException e) {
+			try {
+				LocateRegistry.getRegistry(puerto);
+			} catch(RemoteException e2) {
+				System.err.println("(ERROR) NO SE PUDO CREAR NI LOCALIZAR EL REGISTRO RMI");
+				System.exit(1);
+			}
+	    }
 		
 		return registroRMI;
-        
+			
     }
 	
 	// Tumbar el registro rmi del sistema.
-	public static void tumbarRegistro(int puerto) {
+	public static void tumbarRegistro(Registry registroRMI) {
 		try {
-			Registry registroRMI = LocateRegistry.getRegistry(puerto);
-			UnicastRemoteObject.unexportObject(registroRMI, true);
-			System.out.println("[+] REGISTRO RMI TUMBADO");
+			// Solo se puede tumbar el registro si no quedan servicios 
+			if(registroRMI != null && registroRMI.list().length == 0)
+				UnicastRemoteObject.unexportObject(registroRMI, true);			
 		} catch (RemoteException e) {
 			System.err.println("(ERROR) NO SE PUDO TUMBAR EL REGISTRO RMI");
+			e.printStackTrace();
 			System.exit(1);
 		}
 	}
