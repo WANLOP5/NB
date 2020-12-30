@@ -37,7 +37,6 @@ implements ServicioDatosInterface {
 	
 	// Tablas que relacionan IDCliente-Sesion y viceversa
 	private HashMap<Integer, Integer> TClienteSesion;
-	private HashMap<Integer, Integer> TSesionCliente;
 	// Tablas que relacionan IDRepositorio-Sesion y viceversa
 	private HashMap<Integer, Integer> TRepositorioSesion;
 	private HashMap<Integer, Integer> TSesionRepositorio;
@@ -50,7 +49,7 @@ implements ServicioDatosInterface {
 	private HashMap<Integer, ArrayList<Integer>> TClienteFicheros;
 	
 	// Datos para localizar el ServicioServidorOperador
-	private int puertoSrOperador;
+	private int puertoRepositorio;
 	private String URLServidorOperador;
 	private ServicioSrOperadorInterface servidorOperador;
 	
@@ -65,11 +64,11 @@ implements ServicioDatosInterface {
 		
 		TNRepositorioIRepositorio = new HashMap<String, Integer>();
 		TIRepositorioNRepositorio = new HashMap<Integer, String>();
-		TClienteRepositorio = new HashMap<Integer, Integer>();
+		
 		TRepositorioCliente = new HashMap<Integer, Integer>();
+		TClienteRepositorio = new HashMap<Integer, Integer>();
 		
 		TClienteSesion = new HashMap<Integer, Integer>();
-		TSesionCliente = new HashMap<Integer, Integer>();
 		TRepositorioSesion = new HashMap<Integer, Integer>();
 		TSesionRepositorio = new HashMap<Integer, Integer>();
 		
@@ -79,17 +78,18 @@ implements ServicioDatosInterface {
 		TClienteFicheros = new HashMap<Integer, ArrayList<Integer>>();
 		
 		// atributos para localizar el ServicioServidorOperador en el rmiregistry
-		puertoSrOperador = 9091; 
-		URLServidorOperador = "rmi://localhost:" + puertoSrOperador + "/servidorOperador";
+		puertoRepositorio = 9092; 
 		
 		
 	}
 	
 	private void localizarServidorOperador(String URLRepositorio) {
-		URLServidorOperador = "rmi://localhost:" + puertoSrOperador + "/clienteOperador";
+		Utilidades.cambiarCodeBase(ServicioSrOperadorInterface.class);
+		
+		URLServidorOperador = "rmi://localhost:" + puertoRepositorio + "/servidorOperador";
 		
 		if(URLRepositorio != null) 
-			URLServidorOperador.concat(URLRepositorio);
+			URLServidorOperador = URLServidorOperador + URLRepositorio;
 		
 		try {
 			servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URLServidorOperador);
@@ -129,7 +129,7 @@ implements ServicioDatosInterface {
 	public int buscarRepositorioAleatorio() {
 		if(TRepositorioSesion.size() == 0) return 0;
 		
-		int indiceAleatorio = new Random().nextInt(TRepositorioSesion.size() - 0 + 1) + 0;
+		int indiceAleatorio = new Random().nextInt(TRepositorioSesion.size());
 		int repositorio = (int) TRepositorioSesion.keySet().toArray()[indiceAleatorio];
 		
 		return repositorio;
@@ -207,7 +207,7 @@ implements ServicioDatosInterface {
 		if(idRepositorio == 0) return -2;
 		
 		localizarServidorOperador("/" + idRepositorio);
-		
+	
 		// Crear la carpeta en el repositorio con el id del cliente.
 		servidorOperador.crearCarpetaRepositorio(idCliente);
 		// Ingresar al cliente en las tablas nombre-cliente

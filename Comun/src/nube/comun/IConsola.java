@@ -34,7 +34,6 @@ public class IConsola {
 		}
 		catch(Exception e){ 
 			System.out.println("\n(ERROR) ELIGIENDO LA OPCION");
-			e.printStackTrace();
 		}
 		return opcionElegida; 
 	}

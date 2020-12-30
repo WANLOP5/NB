@@ -9,10 +9,8 @@
 package nube.repositorio;
 
 import java.io.File;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;

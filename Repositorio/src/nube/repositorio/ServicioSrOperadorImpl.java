@@ -64,15 +64,15 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 	 *  a si que las carpetas de los clientes se crean en la carpeta*/
 	@Override
 	public boolean crearCarpetaRepositorio(int idCliente) throws RemoteException {
-			File carpeta = new File(""+idCliente);
-			boolean carpetaCreada = carpeta.mkdir(); // true si se ha creado.
-			
-			if(carpetaCreada) {
-				System.out.println("la carpeta se ha creado"+ idCliente + "en la ruta" + System.getProperty("user.dir"));
-				Repositorio.carpetasRepositorio.add(""+idCliente);
-			}else {
-				System.out.println("no se ha podido crear la carpeta"+ idCliente +"en la ruta"+ System.getProperty("user.dir"));
-			}
+		File carpeta = new File(""+idCliente);
+		boolean carpetaCreada = carpeta.mkdir(); // true si se ha creado.
+		
+		if(carpetaCreada) {
+			System.out.println("la carpeta se ha creado"+ idCliente + "en la ruta" + System.getProperty("user.dir"));
+			Repositorio.carpetasRepositorio.add(""+idCliente);
+		}else {
+			System.out.println("no se ha podido crear la carpeta"+ idCliente +"en la ruta"+ System.getProperty("user.dir"));
+		}
 		return carpetaCreada;
 	}
 	

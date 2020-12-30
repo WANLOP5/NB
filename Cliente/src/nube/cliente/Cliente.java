@@ -46,9 +46,12 @@ public class Cliente {
 		
 	// Localiza el servicio autenticador en el registro e inicializa el objeto remoto
 	private static void localizarAutenticador() {
+		Utilidades.cambiarCodeBase(ServicioAutenticacionInterface.class);
+		
 		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
 		try {
 			srautenticador = (ServicioAutenticacionInterface) Naming.lookup(URLAutenticador);
+			
 			System.out.println("[+] SERVICIO AUTENTICADOR LOCALIZADO EN EL SERVIDOR");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL AUTENTICADOR");
@@ -60,6 +63,8 @@ public class Cliente {
 	
 	// Localiza el servicio gestor en el registro e inicializa el objeto remoto
 	private static void localizarGestor() {
+		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
+		
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
 		try {
 			srgestor= (ServicioGestorInterface) Naming.lookup(URLGestor);
@@ -75,6 +80,7 @@ public class Cliente {
 	
 	// Localiza el servicio cliente operador en el registro e inicializa el objeto remoto
 	private static void localizarClienteOperador(String URLRepositorio) {
+		Utilidades.cambiarCodeBase(ServicioClOperadorInterface.class);
 		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador";
 		
 		if(URLRepositorio != null) 
@@ -140,6 +146,7 @@ public class Cliente {
 					System.out.println("[+] USUARIO REGISTRADO");
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
+					e.printStackTrace();
 					System.exit(1);
 				}
 				break;

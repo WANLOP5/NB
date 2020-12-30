@@ -122,14 +122,17 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	
 	// Lista los clientes del sistema
 	public void listarClientes() throws RemoteException {
+		System.out.println("[DATOS NOMBRECLIENTE-IDCLIENTE]");
 		System.out.println(baseDatos.listarClientes());
 	}
 	// Lista los repositorios del sistema
 	public void listarRepositorios() throws RemoteException {
+		System.out.println("[DATOS NOMBREREPOSITORIO-IDREPOSITORIO]");
 		System.out.println(baseDatos.listarRepositorios());
 	}
 	// Lista los clientes y sus repositorios
 	public void listarClientesRepositorios() throws RemoteException {
+		System.out.println("[RELACIONES IDCLIENTE-IDREPOSITORIO]");
 		System.out.println(baseDatos.listarClientesRepositorios());
 	}
 	
