@@ -127,7 +127,7 @@ implements ServicioDatosInterface {
 	
 	// Busca un repositorio aleatorio disponible
 	public int buscarRepositorioAleatorio() {
-		if(TRepositorioSesion.size() == 0) return 0;
+		if(TRepositorioSesion.size() == 0) return -1;
 		
 		int indiceAleatorio = new Random().nextInt(TRepositorioSesion.size());
 		int repositorio = (int) TRepositorioSesion.keySet().toArray()[indiceAleatorio];
@@ -150,10 +150,17 @@ implements ServicioDatosInterface {
 	public Metadatos buscarMetadatos(int idFichero) {
 		return TIFicheroMetadatos.get(idFichero);
 	}
+	
 	// Busca el id del cliente con su sesionn.
 	public int buscarIDCliente(int sesionCliente) {
 		return TClienteSesion.get(sesionCliente);
 	}
+	
+	// Busca el id del cliente con su nombre
+	public int buscarIDCiente(String nombreCliente) {
+		return TNClienteICliente.get(nombreCliente);
+	}
+	
 	// Busca el id del repositorio con su sesionn.
 	public int buscarIDRepositorio(int sesionRepositorio) {
 		return TSesionRepositorio.get(sesionRepositorio);
@@ -174,7 +181,7 @@ implements ServicioDatosInterface {
 			if(!TNClienteICliente.containsKey(nombre)) return -1;
 			// Comprueba que el cliente no este autenticado en el sistema
 			int idCliente = TNClienteICliente.get(nombre);
-			if(!TClienteSesion.containsKey(idCliente)) return -2;
+			if(TClienteSesion.containsKey(idCliente)) return -2;
 			// Comprueba que el repositorio del cliente este autenticado en el sistema.
 			int repositorioCliente = TClienteRepositorio.get(idCliente);
 			if(!TRepositorioSesion.containsKey(repositorioCliente)) return -3;
@@ -191,7 +198,6 @@ implements ServicioDatosInterface {
 		
 		int idCliente = buscarIDCliente(sesion);
 		TClienteSesion.put(idCliente, sesion);
-		TClienteSesion.put(sesion, idCliente);
 		
 		return idCliente;
 	}
@@ -204,7 +210,7 @@ implements ServicioDatosInterface {
 		// Buscar un repositorio aleatorio de los disponibles para el cliente.
 		int idRepositorio = buscarRepositorioAleatorio(); 
 		// Si no hay repositorios entonces devolver -2 como error.
-		if(idRepositorio == 0) return -2;
+		if(idRepositorio == -1) return -2;
 		
 		localizarServidorOperador("/" + idRepositorio);
 	
