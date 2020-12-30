@@ -143,12 +143,14 @@ public class Cliente {
 					String nombre = IConsola.pedirDato("NOMBRE");
 					
 					srautenticador.registrarCliente(nombre);
-					System.out.println("[+] USUARIO REGISTRADO");
+					System.out.println("\n[+] USUARIO REGISTRADO");
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
 					e.printStackTrace();
 					System.exit(1);
 				}
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 2: 
 				
@@ -160,11 +162,13 @@ public class Cliente {
 					nombreCliente = srgestor.buscarNombreCliente(idCliente);
 					idRepositorioCliente = srgestor.buscarRepositorio(idCliente);
 					
-					System.out.println("[+] USUARIO AUTENTICADO");
+					System.out.println("\n[+] USUARIO AUTENTICADO");
 				} catch (RemoteException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
 					System.exit(1);
 				}
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 3: finalizado = true; break;
 			}
@@ -178,7 +182,7 @@ public class Cliente {
 		File ficheroDisco = new File(URIFichero);
 				
 		if(ficheroDisco.isDirectory() && !ficheroDisco.exists()) {
-			System.err.println("(ERROR) EL FICHERO NO EXISTE / SE INTENTO SUBIR UNA CARPETA");
+			System.err.println("(ERROR) EL FICHERO NO EXISTE O SE INTENTO SUBIR UNA CARPETA");
 			return false;
 		}
 		
@@ -224,8 +228,10 @@ public class Cliente {
 					System.exit(1);
 				}
 				
-				System.out.println("[+] FICHERO SUBIDO AL REPOSITORIO CON EXITO");
+				System.out.println("\n[+] FICHERO SUBIDO AL REPOSITORIO CON EXITO");
 				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 2: 
 				IConsola.limpiarConsola();
@@ -250,6 +256,8 @@ public class Cliente {
 					System.exit(1);
 				}
 				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 3: 
 				IConsola.limpiarConsola();
@@ -273,7 +281,8 @@ public class Cliente {
 					System.exit(1);
 				}
 				
-				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 4: 
 				IConsola.limpiarConsola();
@@ -284,6 +293,9 @@ public class Cliente {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);
 				}
+				
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 5: 
 				IConsola.limpiarConsola();
@@ -294,6 +306,8 @@ public class Cliente {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);
 				} 
+				IConsola.pausar();
+				IConsola.limpiarConsola();
 				break;
 			case 6: finalizado = true; break;
 			}
@@ -309,12 +323,13 @@ public class Cliente {
 		puertoCliente = 9093;
 		
 		localizarAutenticador();
+		localizarGestor();
+		
 		boolean autenticado = bucleMenuRegistro();
 		
 		Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
 			
 		iniciarDiscoCliente();
-		localizarGestor();
 		localizarClienteOperador(null);
 		
 		if(autenticado) bucleMenuPrincipal();

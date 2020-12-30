@@ -20,58 +20,59 @@ import nube.comun.Fichero;
 import nube.comun.ServicioDiscoClienteInterface;
 
 public class ServicioSrOperadorImpl extends UnicastRemoteObject implements ServicioSrOperadorInterface{
-	private int puertoDiscocliente;
-	private String URLDiscoCliente;
+	// Objeto remoto del ServicioDiscoCliente para localizarlo mas tarde.
 	ServicioDiscoClienteInterface discoCliente;
 
-	
-	// identificador generado por eclipse al utilizar la clase UnicastRemoteObject
 	private static final long serialVersionUID = 400066334857238973L;
 	
-	// constructor de la clase ServicioSrOperadorImpl
 	public ServicioSrOperadorImpl() throws RemoteException, MalformedURLException, NotBoundException {
 		super();
-		// Inicializando datos para localizar el servicio disco cliente
-		puertoDiscocliente = 9092;
-		URLDiscoCliente = "rmi://localhost:" + puertoDiscocliente + "/discoCliente";
+	}
+	
+	// Localiza el servicio discoCliente en la URL que se le indique
+	private void localizarDiscoCliente(String URL) throws RemoteException, MalformedURLException, NotBoundException {
+		discoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URL);
 	}
 
-	// metodo para descargar un fichero, envia un fichero del repositorio en la URL enviada
-	@Override
-	public void bajarFichero(String Fnombre, int idCliente, String URLDiscoCliente) throws RemoteException  {
-		Fichero fichero = new Fichero(""+idCliente,Fnombre,""+idCliente);
+	// Bajada de un fichero utilizando el servicio discoCliente
+	public void bajarFichero(String nombreFichero, int idCliente, String URLDiscoCliente) throws RemoteException  {
+		Fichero fichero = new Fichero(""+idCliente,nombreFichero,""+idCliente);
 		
 		try {
-			discoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLDiscoCliente);
+			localizarDiscoCliente(URLDiscoCliente);
 		} catch (MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) NO SE PUDO LOCALIZAR EL SERVICIO DISCO CLIENTE");
 			return;
 		} 
 		
-		if(discoCliente.bajarFicheroDisco(Fnombre,fichero)==false)
-		{
-			System.out.println("ha ocurrido un error en el envio (fallo en el checksum), debe intentarlo de nuevo");
-		}
-		else {
-			System.out.println("Fichero bajado"+ Fnombre);
-		}
+		if(discoCliente.bajarFicheroDisco(fichero)==false)
+			System.out.println("(ERROR) ha ocurrido un error en el envio (fallo en el checksum), debe intentarlo de nuevo");
+		
+		System.out.println("\n[+] SE BAJO EL FICHERO"+ nombreFichero);
+
 	}
 
 	
-	/** crea la carpeta del cliente, no creamos carpeta de la repo, ya que no tiene sentido
-	 *  puesto que el servicio Datos es quien conoce la relacion entre repos clientes
-	 *  si hay varias repos registradas nos da igual, incluso si hay varias repos autenticadas
-	 *  a si que las carpetas de los clientes se crean en la carpeta*/
-	@Override
-	public boolean crearCarpetaRepositorio(int idCliente) throws RemoteException {
-		File carpeta = new File(""+idCliente);
-		boolean carpetaCreada = carpeta.mkdir(); // true si se ha creado.
+	// Crea una carpeta para alojar los ficheros del cliente idCliente 
+	public boolean crearCarpetaCliente(int idCliente) throws RemoteException {
+		// Ruta absoluta donde se creo la carpeta del repositorio
+		String rutaRepositorio = System.getProperty("user.dir");
+		System.out.println("(AVISO) LAS CARPETAS DE LOS CLIENTES SE CREAN EN "+rutaRepositorio);
 		
-		if(carpetaCreada) {
-			System.out.println("la carpeta se ha creado"+ idCliente + "en la ruta" + System.getProperty("user.dir"));
-			Repositorio.carpetasRepositorio.add(""+idCliente);
+		// Crear objeto archivo para la carpeta
+		File carpeta = new File(""+idCliente);
+		
+		// Devolvera true si la operacion es exitosa
+		boolean carpetaCreada = carpeta.mkdir(); 
+		
+		if(carpetaCreada) {			
+			System.out.println("\n[+] LA CARPETA DEL CLIENTE "+ idCliente 
+							+ " SE HA CREADO EN "+rutaRepositorio);
+		
+			// Ingresara la nueva carpeta 
+			Repositorio.insertarCarpetaCliente(idCliente);
 		}else {
-			System.out.println("no se ha podido crear la carpeta"+ idCliente +"en la ruta"+ System.getProperty("user.dir"));
+			System.err.println("(ERROR) NO SE PUDO CREAR LA CARPETA PARA EL CLIENTE "+idCliente);
 		}
 		return carpetaCreada;
 	}

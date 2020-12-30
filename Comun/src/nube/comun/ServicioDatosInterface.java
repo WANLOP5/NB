@@ -49,6 +49,6 @@ public interface ServicioDatosInterface extends Remote {
 	// Elimina un fichero a la lista de ficheros
 	public int eliminarFichero(int idFichero, int idCliente) throws RemoteException;
 	// Comprueba si el fichero pertenece al cliente y devuelve sus metadatos
-	public Metadatos descargarFichero(int idFichero, int idCliente) throws RemoteException;
+	public Metadatos obtenerDatosFichero(int idFichero, int idCliente) throws RemoteException;
 	
 }

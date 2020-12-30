@@ -39,7 +39,7 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
 		File f = new File(carpeta + File.separator + fichero);
 		boolean ficheroBorrado = f.delete();
 		if(ficheroBorrado)
-			System.out.println("El fichero se ha borrado correctamente" + carpeta + File.separator + fichero);
+			System.out.println("El fichero se ha borrado correctamente " + carpeta + File.separator + fichero);
 		else 
 			System.out.println("El fichero no se ha podido borrar" + carpeta + File.separator + fichero);
 		

@@ -23,8 +23,6 @@ import nube.comun.ServicioClOperadorInterface;
 import nube.comun.ServicioSrOperadorInterface;
 import nube.comun.Utilidades;
 
-import nube.servidor.ServicioAutenticacionImpl;
-
 public class Repositorio {
 	// Lista de carpetas que guarda el repositorio
 	public static List<String> carpetasRepositorio;
@@ -44,6 +42,11 @@ public class Repositorio {
 	
 	// ID del repositorio autenticado
 	private static int idRepositorio;
+	
+	// Inserta una nueva carpeta a las carpetas del cliente en el repositorio
+	public static void insertarCarpetaCliente(int idCliente) {
+		carpetasRepositorio.add("" + idCliente);
+	}
 	
 	// Localiza el servicio autenticador en el registro e inicializa el objeto remoto
 	private static void localizarAutenticador() {

@@ -209,7 +209,7 @@ implements ServicioDatosInterface {
 		localizarServidorOperador("/" + idRepositorio);
 	
 		// Crear la carpeta en el repositorio con el id del cliente.
-		servidorOperador.crearCarpetaRepositorio(idCliente);
+		servidorOperador.crearCarpetaCliente(idCliente);
 		// Ingresar al cliente en las tablas nombre-cliente
 		TNClienteICliente.put(nombre, idCliente);
 		TIClienteNCliente.put(idCliente, nombre);
@@ -320,7 +320,7 @@ implements ServicioDatosInterface {
 		
 	}
 	// Comprueba si el fichero pertenece al cliente y devuelve sus metadatos
-	public Metadatos descargarFichero(int idFichero, int idCliente) {
+	public Metadatos obtenerDatosFichero(int idFichero, int idCliente) {
 		int errorPropietario = comprobarFichero(idFichero, idCliente);
 		// Comprobar que el fichero pertenece al cliente
 		if(errorPropietario != 0) return null;
