@@ -29,26 +29,27 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
 
 	// recibe un fichero, el uso es el que explico el profesor en el foro con un ejemplo.
 	@Override
-	public boolean bajarFicheroDisco(String nombreFichero, Fichero fichero) throws RemoteException {
+	public boolean bajarFicheroDisco(Fichero objetoFichero) throws RemoteException {
+		boolean operacionExitosa = false;
 		
-		OutputStream os;
-		String Fnombre = fichero.obtenerNombre() + "." + nombreFichero; // para saber de que cliente es el fichero.
+		OutputStream salidaFichero;
+		String nombreFichero = objetoFichero.obtenerNombre();
 		
 		try {
-			os = new FileOutputStream(Fnombre);
-			if(fichero.escribirEn(os)==false) {
-				os.close();
-				return false;
+			salidaFichero = new FileOutputStream(nombreFichero);
+			if(!objetoFichero.escribirEn(salidaFichero)) {
+				salidaFichero.close();
 			}
-			os.close();
-			System.out.println("El fichero"+ Fnombre +" ha sido recibido y se ha guardado");
+			salidaFichero.close();
+			operacionExitosa = true;
+			System.out.println("[+] FICHERO "+ nombreFichero +" RECIBIDO Y GUARDADO");
 			
 		}catch(FileNotFoundException e) {
-			e.printStackTrace();
+			System.err.println("(ERROR) NO SE ENCONTRO EL FICHERO A BAJAR");
 		}catch(IOException e) {
-			e.printStackTrace();
+			System.err.println("(ERROR) NO SE PUDO BAJAR EL FICHERO AL DISCO");
 		}
-		return true;
+		return operacionExitosa;
 		
 	}
 }

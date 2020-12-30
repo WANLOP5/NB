@@ -12,6 +12,6 @@ import java.rmi.RemoteException;
 public interface ServicioDiscoClienteInterface extends Remote{
 
 	// metodo para descargar un fichero al disco duro
-	public boolean bajarFicheroDisco(String nombreFichero,Fichero fichero) throws RemoteException;
+	public boolean bajarFicheroDisco(Fichero fichero) throws RemoteException;
 
 }
