@@ -157,7 +157,7 @@ implements ServicioDatosInterface {
 	}
 	
 	// Busca el id del cliente con su nombre
-	public int buscarIDCiente(String nombreCliente) {
+	public int buscarIDCliente(String nombreCliente) {
 		return TNClienteICliente.get(nombreCliente);
 	}
 	
@@ -196,7 +196,7 @@ implements ServicioDatosInterface {
 		int errorInsertar = comprobarCliente(nombre, "autenticar");
 		if(errorInsertar != 0) return errorInsertar;
 		
-		int idCliente = buscarIDCliente(sesion);
+		int idCliente = buscarIDCliente(nombre);
 		TClienteSesion.put(idCliente, sesion);
 		
 		return idCliente;
