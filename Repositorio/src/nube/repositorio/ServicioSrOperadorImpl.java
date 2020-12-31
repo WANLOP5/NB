@@ -55,10 +55,6 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 	
 	// Crea una carpeta para alojar los ficheros del cliente idCliente 
 	public boolean crearCarpetaCliente(int idCliente) throws RemoteException {
-		// Ruta absoluta donde se creo la carpeta del repositorio
-		String rutaRepositorio = System.getProperty("user.dir");
-		System.out.println("(AVISO) LAS CARPETAS DE LOS CLIENTES SE CREAN EN "+rutaRepositorio);
-		
 		// Crear objeto archivo para la carpeta
 		File carpeta = new File(""+idCliente);
 		
@@ -66,8 +62,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 		boolean carpetaCreada = carpeta.mkdir(); 
 		
 		if(carpetaCreada) {			
-			System.out.println("\n[+] LA CARPETA DEL CLIENTE "+ idCliente 
-							+ " SE HA CREADO EN "+rutaRepositorio);
+			System.out.println("\n[+] LA CARPETA DEL CLIENTE "+ idCliente + " HA SIDO CREADA");
 		
 			// Ingresara la nueva carpeta 
 			Repositorio.insertarCarpetaCliente(idCliente);

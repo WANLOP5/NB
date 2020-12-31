@@ -79,12 +79,9 @@ public class Cliente {
 	}
 	
 	// Localiza el servicio cliente operador en el registro e inicializa el objeto remoto
-	private static void localizarClienteOperador(String URLRepositorio) {
+	private static void localizarClienteOperador() {
 		Utilidades.cambiarCodeBase(ServicioClOperadorInterface.class);
-		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador";
-		
-		if(URLRepositorio != null) 
-			URLClienteOperador.concat(URLRepositorio);
+		URLClienteOperador = "rmi://localhost:" + puertoRepositorio + "/clienteOperador/" + idRepositorioCliente;
 		
 		try {
 			clienteOperador = (ServicioClOperadorInterface) Naming.lookup(URLClienteOperador);
@@ -142,8 +139,19 @@ public class Cliente {
 				try {
 					String nombre = IConsola.pedirDato("NOMBRE");
 					
-					srautenticador.registrarCliente(nombre);
-					System.out.println("\n[+] USUARIO REGISTRADO");
+					switch(srautenticador.registrarCliente(nombre)) {
+					case -2 : 
+						System.err.println("(ERROR) NO HAY REPOSITORIOS EN LINEA PARA "+nombre); 
+						break;
+					case -1: 
+						System.err.println("\n(ERROR) YA EXISTE UN CLIENTE CON NOMBRE "+nombre); 
+						break;
+					default: 
+						System.out.println("\n[+] "+nombre+" SE HA REGISTRADO EN EL SISTEMA"); 
+						break;
+					}
+
+						
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
 					e.printStackTrace();
@@ -155,16 +163,37 @@ public class Cliente {
 			case 2: 
 				
 				try {	
-					String nombre = IConsola.pedirDato("NOMBRE");
-					
+					String nombre = IConsola.pedirDato("NOMBRE");					
 					idCliente = srautenticador.autenticarCliente(nombre);
-					// Inicializar los datos del cliente con el id retornado
-					nombreCliente = srgestor.buscarNombreCliente(idCliente);
-					idRepositorioCliente = srgestor.buscarRepositorio(idCliente);
 					
-					System.out.println("\n[+] USUARIO AUTENTICADO");
+					// imprimir mensajes de error o exito segun haya devuelto el servicio autenticador
+					switch(idCliente) {
+					case -3 : 
+						System.err.println("\n(ERROR) EL REPOSITORIO DEL CLIENTE NO ESTA EN LINEA"); 
+						break;
+					case -2 : 
+						System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " YA ESTA AUTENTICADO"); 
+						break;
+					case -1 : 
+						System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " NO ESTA REGISTRADO"); 
+						break;
+					default: 
+						System.out.println("\n[+] "+nombre + " SE HA AUTENTICADO EN EL SISTEMA");
+						
+						// Inicializar los datos del cliente con el id retornado
+						nombreCliente = srgestor.buscarNombreCliente(idCliente);
+						idRepositorioCliente = srgestor.buscarRepositorio(idCliente);
+						
+						// Ruta absoluta donde se crean las carpetas
+						String rutaClientes = System.getProperty("user.dir");
+						System.out.println("\n(AVISO) LAS CARPETAS DE LOS CLIENTES SE CREAN EN "+rutaClientes);
+						
+						autenticado = true;
+						finalizado = true;
+						break;
+					}	
 				} catch (RemoteException e) {
-					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
+					System.out.println("(ERROR) OCURRIO UN ERROR AUTENTICANDO EL USUARIO");
 					System.exit(1);
 				}
 				IConsola.pausar();
@@ -201,27 +230,19 @@ public class Cliente {
 			
 			switch(opcion) {
 			case 1: 
-				IConsola.limpiarConsola();
-				
 				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
 				String propietario = IConsola.pedirDato("PROPIETARIO DEL FICHERO");
 				
 				comprobarFichero(URIFichero);
 				
 				try {
-					Fichero nuevoFichero = new Fichero(nombreCliente, propietario);
+					Fichero nuevoFichero = new Fichero(URIFichero, propietario);
 					if(srgestor.subirFichero(idCliente, URIFichero) != 0) break;
 				
-					// Localizar el repositorio en el cliente operador 
-					localizarClienteOperador("/" + idRepositorioCliente);
-					
 					if(!clienteOperador.subirFichero(nuevoFichero)) {
 						System.err.println("(ERROR) NO SE PUDO SUBIR EL FICHERO");
 						break;
 					}
-					
-					// Asignar el URLClienteOperador predeterminado
-					localizarClienteOperador(null);
 					
 				} catch(RemoteException e) {
 					System.err.println("(ERROR) INESPERADO FUNCIONAMIENTO DE LOS SERVICIOS");
@@ -330,7 +351,7 @@ public class Cliente {
 		Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
 			
 		iniciarDiscoCliente();
-		localizarClienteOperador(null);
+		localizarClienteOperador();
 		
 		if(autenticado) bucleMenuPrincipal();
 		

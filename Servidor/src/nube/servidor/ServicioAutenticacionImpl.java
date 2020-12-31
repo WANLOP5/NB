@@ -47,12 +47,6 @@ implements ServicioAutenticacionInterface {
 	public int autenticarCliente(String nombre) throws RemoteException {
 		int nuevaSesion = getSesion();
 		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
-		switch (identificador) {
-		case -3 : System.err.println("\n(ERROR) EL REPOSITORIO DEL CLIENTE NO ESTA EN LINEA"); break;
-		case -2 : System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " YA ESTA AUTENTICADO"); break;
-		case -1 : System.err.println("\n(ERROR) EL CLIENTE "+ nombre + " NO ESTA REGISTRADO"); break;
-		default : System.out.println("\n[+] "+nombre + " SE HA AUTENTICADO EN EL SISTEMA"); break;
-		}
 		
 		return identificador;
 	}
@@ -76,11 +70,6 @@ implements ServicioAutenticacionInterface {
 	@Override
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException {
 		int identificador = baseDatos.insertarCliente(nombre, getSesion());
-		switch(identificador) {
-		case -2 : System.err.println("(ERROR) NO HAY REPOSITORIOS EN LINEA PARA "+nombre); break;
-		case -1: System.err.println("\n(ERROR) YA EXISTE UN CLIENTE CON NOMBRE "+nombre); break;
-		default : System.out.println("\n[+] "+nombre+" SE HA REGISTRADO EN EL SISTEMA"); break;
-		}
 		
 		return identificador;
 	}

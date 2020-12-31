@@ -182,19 +182,15 @@ public class Repositorio {
 				IConsola.limpiarConsola();
 				break;
 			case 2 : 
-				if(carpetasRepositorio.isEmpty()) {
-					System.out.println("[+] NO HAY CARPETAS");
+				System.out.println(carpetasRepositorio);
+				String carpeta = IConsola.pedirDato("NOMBRE DE CARPETA");
+				
+				File carpetaDisco = new File(carpeta);
+				if(carpetaDisco.exists()) {
+					String[] ficheros = carpetaDisco.list();
+					for(String s : ficheros) System.out.println(s);
 				}else {
-					System.out.println(carpetasRepositorio);
-					String carpeta = IConsola.pedirDato("NOMBRE DE CARPETA");
-					
-					File carpetaDisco = new File(carpeta);
-					if(carpetaDisco.exists()) {
-						String[] ficheros = carpetaDisco.list();
-						for(String s : ficheros) System.out.println(s);
-					}else {
-						System.err.println("(ERROR) LA CARPETA NO EXISTE");
-					}
+					System.err.println("(ERROR) LA CARPETA NO EXISTE");
 				}
 				
 				IConsola.pausar();
