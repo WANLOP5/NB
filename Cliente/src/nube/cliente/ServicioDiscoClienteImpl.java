@@ -32,6 +32,7 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
 	public boolean bajarFicheroDisco(Fichero objetoFichero) throws RemoteException {
 		boolean operacionExitosa = false;
 		
+		
 		OutputStream salidaFichero;
 		String nombreFichero = objetoFichero.obtenerNombre();
 		
@@ -42,12 +43,12 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
 			}
 			salidaFichero.close();
 			operacionExitosa = true;
-			System.out.println("[+] FICHERO "+ nombreFichero +" RECIBIDO Y GUARDADO");
+			System.out.println("\n[+] FICHERO "+ nombreFichero +" RECIBIDO Y GUARDADO");
 			
 		}catch(FileNotFoundException e) {
-			System.err.println("(ERROR) NO SE ENCONTRO EL FICHERO A BAJAR");
+			System.err.println("\n(ERROR) NO SE ENCONTRO EL FICHERO A BAJAR");
 		}catch(IOException e) {
-			System.err.println("(ERROR) NO SE PUDO BAJAR EL FICHERO AL DISCO");
+			System.err.println("\n(ERROR) NO SE PUDO BAJAR EL FICHERO AL DISCO");
 		}
 		return operacionExitosa;
 		

@@ -53,9 +53,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	* y devuelve el id del repositorio donde se sube */
 	public int subirFichero(int idCliente, String nombreFichero) throws RemoteException {
 		int codError = baseDatos.insertarFichero(nombreFichero, idCliente);
-		
-		if(codError == -1) System.err.println("(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
-		
+
 		return codError;
 		
 	}
@@ -121,24 +119,21 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	}
 	
 	// Lista los clientes del sistema
-	public void listarClientes() throws RemoteException {
-		System.out.println("[DATOS NOMBRECLIENTE-IDCLIENTE]");
-		System.out.println(baseDatos.listarClientes());
+	public String listarClientes() throws RemoteException {
+		return baseDatos.listarClientes();
 	}
 	// Lista los repositorios del sistema
-	public void listarRepositorios() throws RemoteException {
-		System.out.println("[DATOS NOMBREREPOSITORIO-IDREPOSITORIO]");
-		System.out.println(baseDatos.listarRepositorios());
+	public String listarRepositorios() throws RemoteException {
+		return baseDatos.listarRepositorios();
 	}
 	// Lista los clientes y sus repositorios
-	public void listarClientesRepositorios() throws RemoteException {
-		System.out.println("[RELACIONES IDCLIENTE-IDREPOSITORIO]");
-		System.out.println(baseDatos.listarClientesRepositorios());
+	public String listarClientesRepositorios() throws RemoteException {
+		return baseDatos.listarClientesRepositorios();
 	}
 	
 	// Lista los ficheros del cliente pasado por parametro
-	public void listarFicheros(int idCliente) throws RemoteException {
-		System.out.println(baseDatos.listarFicherosCliente(idCliente));
+	public String listarFicheros(int idCliente) throws RemoteException {
+		return baseDatos.listarFicherosCliente(idCliente);
 	}
 	
 

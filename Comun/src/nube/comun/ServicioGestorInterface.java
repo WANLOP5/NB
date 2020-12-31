@@ -30,11 +30,11 @@ public interface ServicioGestorInterface extends Remote {
 	public Metadatos buscarMetadatos(int idFichero) throws RemoteException;
 	
 	// Lista los clientes del sistema
-	public void listarClientes() throws RemoteException;
+	public String listarClientes() throws RemoteException;
 	// Lista los repositorios del sistema
-	public void listarRepositorios() throws RemoteException;
+	public String listarRepositorios() throws RemoteException;
 	// Lista los clientes y sus repositorios
-	public void listarClientesRepositorios() throws RemoteException;
+	public String listarClientesRepositorios() throws RemoteException;
 	// Lista los ficheros del cliente pasado por parametro
-	public void listarFicheros(int idCliente) throws RemoteException;
+	public String listarFicheros(int idCliente) throws RemoteException;
 }
