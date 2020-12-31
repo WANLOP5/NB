@@ -18,11 +18,8 @@ import java.rmi.server.UnicastRemoteObject;
 import nube.comun.Fichero;
 import nube.comun.ServicioClOperadorInterface;
 
-//implementacion de la interfaz ServicioClOperadorInterface
 public class ServicioClOperadorImpl extends UnicastRemoteObject implements ServicioClOperadorInterface {
-	
-
-	// identificador generado por el eclipse al utilizar la clase UnicastRemoteObject
+	// identificador generado por eclipse al utilizar la clase UnicastRemoteObject
 	private static final long serialVersionUID = -7480727944970116419L;
 
 	// constructor de la clase ServicioClOperadorImpl
@@ -35,13 +32,16 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
 	 * este metodo borra el fichero que se indicada de la carpeta del repositorio.
 	 * */
 	@Override
-	public boolean borrarFichero(String fichero, String carpeta) throws RemoteException {
-		File f = new File(carpeta + File.separator + fichero);
+	public boolean borrarFichero(String nombreFichero, String carpetaCliente) throws RemoteException {
+		File f = new File(carpetaCliente + File.separator + nombreFichero);
+		
 		boolean ficheroBorrado = f.delete();
 		if(ficheroBorrado)
-			System.out.println("El fichero se ha borrado correctamente " + carpeta + File.separator + fichero);
+			System.out.println("\n[+] EL FICHERO "+nombreFichero +
+							" DEL CLIENTE "+carpetaCliente+" HA SIDO BORRADO");
 		else 
-			System.out.println("El fichero no se ha podido borrar" + carpeta + File.separator + fichero);
+			System.err.println("\n(ERROR) EL FICHERO "+ nombreFichero +
+							" DEL CLIENTE "+carpetaCliente+" NO SE HA PODIDO BORRAR");
 		
 		return ficheroBorrado;
 	}
@@ -50,18 +50,34 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
 	 * este metodo se encarga de subir los ficheros a la carpeta del repositorio 
 	 * */
 	@Override
-	public boolean subirFichero(Fichero fichero) throws RemoteException {
-		OutputStream os;
-		String Fnombre = fichero.obtenerPropietario() + File.separator + fichero.obtenerNombre();
+	public boolean subirFichero(Fichero objetoFichero) throws RemoteException {
+		// Cliente propietario del fichero obtenido a traves del objeto Fichero
+		String carpetaCliente = objetoFichero.obtenerPropietario();
+		String nombreFichero = objetoFichero.obtenerNombre();
+		// La URI donde subir el fichero es: CARPETA_CLIENTE_PROPIETARIO/NOMBRE_FICHERO
+		String rutaFichero = carpetaCliente + File.separator + nombreFichero;
+		
+		// Objeto stream para la salida de datos (escritura) 
+		OutputStream salidaFichero;
 		
 		try {
-			os = new FileOutputStream(Fnombre);
-			if(fichero.escribirEn(os)==false) {
-				os.close();
+			// Inicializacion del objeto stream como un stream de salidas para archivos
+			// Se inicializa con la ruta y el nombre donde se escribira
+			salidaFichero = new FileOutputStream(rutaFichero);
+			
+			// Escribir todos los datos del fichero en el objeto stream de salida
+			// Devuelve true si la operacion es exitosa.
+			if(objetoFichero.escribirEn(salidaFichero)==false) {
+				System.err.println("\n(ERROR) NO SE PUDO GUARDAR EL FICHERO "+ nombreFichero +
+								" DEL CLIENTE "+carpetaCliente);
+				// Cerrar el objeto stream del fichero
+				salidaFichero.close();
 				return false;
 			}
-			os.close();
-			System.out.println("El Fichero"+ Fnombre +"ha sido guardado");
+			// Cerrar el objeto stream del fichero
+			salidaFichero.close();
+			System.out.println("\n[+] SE SUBIO EL FICHERO "+ nombreFichero +
+							" DEL CLIENTE "+carpetaCliente);
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
 		}catch(IOException e) {
