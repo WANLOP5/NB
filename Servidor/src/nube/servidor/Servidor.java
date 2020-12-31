@@ -117,7 +117,7 @@ public class Servidor {
 			switch(opcion) {
 			case 1:
 				try {
-					gestor.listarClientes();
+					System.out.println(gestor.listarClientes());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
 				}
@@ -127,7 +127,7 @@ public class Servidor {
 				break;
 			case 2: 
 				try {
-					gestor.listarRepositorios();
+					System.out.println(gestor.listarRepositorios());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
 				}
@@ -137,7 +137,7 @@ public class Servidor {
 				break;
 			case 3: 
 				try {
-					gestor.listarClientesRepositorios();
+					System.out.println(gestor.listarClientesRepositorios());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
 				} 

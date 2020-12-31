@@ -116,11 +116,9 @@ implements ServicioDatosInterface {
 	public String listarFicherosCliente(int idCliente) {
 		String lista = "";
 		
-		for(Metadatos fichero : TIFicheroMetadatos.values()) {
-			if(fichero.getIdCliente() == idCliente) {
-				lista.concat(fichero.getIdFichero() + ") " + 
-							 fichero.getNombre() + "\n");
-			}
+		for(int idFichero : TClienteFicheros.get(idCliente)) {
+			String nombreFichero = buscarMetadatos(idFichero).getNombre();
+			lista += idFichero + ") " + nombreFichero + "\n";
 		}
 		
 		return lista;

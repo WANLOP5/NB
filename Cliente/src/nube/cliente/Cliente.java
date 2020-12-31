@@ -99,7 +99,7 @@ public class Cliente {
 	// Pone a correr el servicio del disco cliente y lo ingresa al registro rmi
 	private static void iniciarDiscoCliente() {
 		Utilidades.cambiarCodeBase(ServicioDiscoClienteInterface.class);
-		URLDiscoCliente = "rmi://localhost:" + puertoCliente + "/discoCliente";
+		URLDiscoCliente = "rmi://localhost:" + puertoCliente + "/discoCliente/"+idCliente;
 		
 		try {			
 			discoCliente = new ServicioDiscoClienteImpl();
@@ -231,18 +231,17 @@ public class Cliente {
 			switch(opcion) {
 			case 1: 
 				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
-				String propietario = IConsola.pedirDato("PROPIETARIO DEL FICHERO");
 				
-				comprobarFichero(URIFichero);
-				
+				if(!comprobarFichero(URIFichero)) break;
+					
 				try {
-					Fichero nuevoFichero = new Fichero(URIFichero, propietario);
-					if(srgestor.subirFichero(idCliente, URIFichero) != 0) break;
-				
-					if(!clienteOperador.subirFichero(nuevoFichero)) {
-						System.err.println("(ERROR) NO SE PUDO SUBIR EL FICHERO");
-						break;
-					}
+					Fichero nuevoFichero = new Fichero(URIFichero, ""+idCliente);
+					if(srgestor.subirFichero(idCliente, URIFichero) == -1) 
+						System.err.println("\n(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
+					
+					if(!clienteOperador.subirFichero(nuevoFichero)) 
+						System.err.println("\n(ERROR) NO SE PUDO SUBIR EL FICHERO");
+					
 					
 				} catch(RemoteException e) {
 					System.err.println("(ERROR) INESPERADO FUNCIONAMIENTO DE LOS SERVICIOS");
@@ -255,14 +254,11 @@ public class Cliente {
 				IConsola.limpiarConsola();
 				break;
 			case 2: 
-				IConsola.limpiarConsola();
-				
 				try {
-					srgestor.listarFicheros(idCliente);
+					System.out.println(srgestor.listarFicheros(idCliente));
 					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
 					
-					String URLFicheroDisco = URLDiscoCliente + "/" + idCliente;
-					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLFicheroDisco);
+					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLDiscoCliente);
 					
 					if(nombreFichero == null) { 
 						System.err.println("(ERROR) NO SE PUDO BAJAR EL FICHERO");
@@ -281,10 +277,8 @@ public class Cliente {
 				IConsola.limpiarConsola();
 				break;
 			case 3: 
-				IConsola.limpiarConsola();
-			
 				try {
-					srgestor.listarFicheros(idCliente);
+					System.out.println(srgestor.listarFicheros(idCliente));
 					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
 					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
 					String carpetaFichero = "" + idCliente;
@@ -306,10 +300,8 @@ public class Cliente {
 				IConsola.limpiarConsola();
 				break;
 			case 4: 
-				IConsola.limpiarConsola();
-				
 				try {
-					srgestor.listarFicheros(idCliente);
+					System.out.println(srgestor.listarFicheros(idCliente));
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);
@@ -319,10 +311,8 @@ public class Cliente {
 				IConsola.limpiarConsola();
 				break;
 			case 5: 
-				IConsola.limpiarConsola();
-				
 				try {
-					srgestor.listarClientes();
+					System.out.println(srgestor.listarClientes());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);

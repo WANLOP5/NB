@@ -41,14 +41,16 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 		try {
 			localizarDiscoCliente(URLDiscoCliente);
 		} catch (MalformedURLException | NotBoundException e) {
-			System.err.println("(ERROR) NO SE PUDO LOCALIZAR EL SERVICIO DISCO CLIENTE");
+			System.out.println(URLDiscoCliente);
+			System.err.println("\n(ERROR) NO SE PUDO LOCALIZAR EL SERVICIO DISCO CLIENTE");
 			return;
 		} 
 		
 		if(discoCliente.bajarFicheroDisco(fichero)==false)
-			System.out.println("(ERROR) ha ocurrido un error en el envio (fallo en el checksum), debe intentarlo de nuevo");
+			System.out.println("\n(ERROR) NO SE PUDO BAJAR EL FICHERO "+nombreFichero+ 
+							"DEL CLIENTE "+idCliente);
 		
-		System.out.println("\n[+] SE BAJO EL FICHERO"+ nombreFichero);
+		System.out.println("\n[+] SE BAJO EL FICHERO "+ nombreFichero+ " DEL CLIENTE "+idCliente);
 
 	}
 
@@ -67,7 +69,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 			// Ingresara la nueva carpeta 
 			Repositorio.insertarCarpetaCliente(idCliente);
 		}else {
-			System.err.println("(ERROR) NO SE PUDO CREAR LA CARPETA PARA EL CLIENTE "+idCliente);
+			System.err.println("\n(ERROR) NO SE PUDO CREAR LA CARPETA PARA EL CLIENTE "+idCliente);
 		}
 		return carpetaCreada;
 	}

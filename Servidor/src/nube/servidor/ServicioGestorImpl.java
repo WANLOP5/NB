@@ -36,7 +36,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		URLBaseDatos = "rmi://localhost:"+puertoBaseDatos+"/baseDatos";
 		localizarBaseDatos(URLBaseDatos);
 		// Atributos para localizar el servicio servidorOperador
-		puertoSrOperador = 9091;
+		puertoSrOperador = 9092;
 		URLServidorOperador = "rmi://localhost:"+puertoSrOperador+"/servidorOperador";
 		
 	}
@@ -67,7 +67,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 			if(mFichero == null) return null;
 			
 			// Busca el repositorio del cliente.
-			int repositorioCliente = baseDatos.buscarIDCliente(idCliente);
+			int repositorioCliente = baseDatos.buscarRepositorio(idCliente);
 			// URL para localizar la carpeta del repositorio.
 			String URLRepositorio = URLServidorOperador+"/"+ repositorioCliente;
 			// Localizar la carpeta del repositorio en el servicio servidor operador.
@@ -75,12 +75,10 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 			
 			// Baja el fichero con el servidorOperador.
 			servidorOperador.bajarFichero(mFichero.getNombre(), idCliente, URLDiscoCliente);
-			
-			// El Servidor Operador vuelve a la URL original.
-			localizarServidorOperador(URLServidorOperador);
 
 		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			e.printStackTrace();
+			return null;
 		}
 		
 		return mFichero.getNombre();
