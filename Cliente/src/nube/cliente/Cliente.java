@@ -283,12 +283,15 @@ public class Cliente {
 					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
 					String carpetaFichero = "" + idCliente;
 					
-					if(srgestor.borrarFichero(idFichero, idCliente) == -1) break;
+					if(srgestor.borrarFichero(idFichero, idCliente) == -1) {
+						System.err.println("(ERROR) EL ARCHIVO NO LE PERTENECE AL CLIENTE");
+						break;
+					}
 					
 					if(!clienteOperador.borrarFichero(nombreFichero, carpetaFichero)) break;
 					
-					System.out.println("[+] FICHERO CON ID "+idFichero + " BORRADO CON EXITO DE "
-							+ "LA CARPETA DE REPOSITORIO /"+ idCliente);
+					System.out.println("[+] FICHERO "+nombreFichero+ ", BORRADO CON EXITO DE "
+							+ "LA CARPETA DEL CLIENTE "+ idCliente);
 					break;
 					
 				} catch (RemoteException e) {

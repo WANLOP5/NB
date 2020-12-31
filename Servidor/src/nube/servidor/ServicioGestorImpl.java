@@ -90,10 +90,6 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public int borrarFichero(int idFichero, int idCliente) throws RemoteException {
 		int codError = baseDatos.eliminarFichero(idFichero, idCliente);
 		
-		if(codError == -1) System.err.println("(ERROR) EL ARCHIVO NO LE PERTENECE AL CLIENTE");
-		else System.out.println("SE HA BORRADO EL FICHERO CON ID"+idFichero+
-				 				" del cliente "+idCliente);
-		
 		return codError;
 	}
 	

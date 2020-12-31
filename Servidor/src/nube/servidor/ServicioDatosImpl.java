@@ -314,8 +314,10 @@ implements ServicioDatosInterface {
 		// Comprobar que el fichero pertenece al cliente
 		if(errorEliminar != 0) return errorEliminar;
 		
+		// Obtener la lista de los ficheros del cliente
+		int indiceFichero = TClienteFicheros.get(idCliente).indexOf(idFichero);
 		// Elimina el id del fichero de la lista del cliente
-		TClienteFicheros.get(idCliente).remove(idFichero);
+		TClienteFicheros.get(idCliente).remove(indiceFichero);
 		// Elimina el fichero de las tablas fichero-metadatos
 		TIFicheroMetadatos.remove(idFichero);
 		TMetadatosIFichero.remove(buscarMetadatos(idFichero));
