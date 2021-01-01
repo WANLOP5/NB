@@ -20,11 +20,17 @@ public interface ServicioAutenticacionInterface extends Remote{
 	// metodo para autenticar un cliente en el servidor
 	public int autenticarCliente(String nombre) throws RemoteException;
 	
+	// metodo para desconectar un cliente
+	public void desconectarCliente(int idCliente) throws RemoteException;
+		
 	// metodo para registrar un repositorio en el servidor
 	public int registrarRepositorio(String nombre) throws RemoteException;
 	
 	// metodo para autenticar un repositorio en el servidor
 	public int autenticarRepositorio(String nombre) throws RemoteException;
+	
+	// metodo para desconectar un repositorio 
+	public void desconectarRepositorio(int idRepositorio) throws RemoteException;
 	
 	
 }

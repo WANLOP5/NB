@@ -84,6 +84,17 @@ implements ServicioAutenticacionInterface {
 		return identificador;
 	}
 	
+	// metodo para desconectar un cliente borrando su sesion
+	public void desconectarCliente(int idCliente) throws RemoteException{
+		baseDatos.eliminarSesionCliente(idCliente);
+	}
+	
+	// metodo para desconectar un repositorio borrando su sesion
+	public void desconectarRepositorio(int idRepositorio) throws RemoteException{
+		baseDatos.eliminarSesionRepositorio(idRepositorio);
+	}
+	
+	
 	// devuelve el id de sesion y el contador de sesiones
 	private int getSesion() {
 		return sesion++;

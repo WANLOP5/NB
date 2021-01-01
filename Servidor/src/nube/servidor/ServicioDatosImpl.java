@@ -200,6 +200,12 @@ implements ServicioDatosInterface {
 		
 		return idCliente;
 	}
+	
+	// Elimina la sesion de un cliente cuando se desconecta
+	public void eliminarSesionCliente(int idCliente) {
+		TClienteSesion.remove(idCliente);
+	}
+	
 	// Inserta un cliente nuevo para registrarlo
 	public int insertarCliente(String nombre, int idCliente) throws RemoteException {
 		// Comprueba que no hayan inconvenientes para insertar.
@@ -258,6 +264,11 @@ implements ServicioDatosInterface {
 		TSesionRepositorio.put(sesion, idRepositorio);
 		
 		return idRepositorio;
+	}
+	
+	// Elimina la sesion de un repositorio cuando se desconecta
+	public void eliminarSesionRepositorio(int idRepositorio) {
+		TRepositorioSesion.remove(idRepositorio);
 	}
 	
 	// Inserta un repositorio nuevo para registrarlo

@@ -196,7 +196,14 @@ public class Repositorio {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
-			case 3: finalizado = true; break;
+			case 3:
+				try { 
+					srautenticador.desconectarRepositorio(idRepositorio);
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
+				}
+				finalizado = true; 
+				break;
 			} 
 		} while(!finalizado);		
 	}

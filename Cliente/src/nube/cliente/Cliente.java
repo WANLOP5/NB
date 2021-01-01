@@ -301,6 +301,7 @@ public class Cliente {
 				
 				IConsola.pausar();
 				IConsola.limpiarConsola();
+				
 				break;
 			case 4: 
 				try {
@@ -323,7 +324,15 @@ public class Cliente {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
-			case 6: finalizado = true; break;
+			case 6:
+				try { 
+					srautenticador.desconectarCliente(idCliente);
+				} catch (RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
+				}
+				
+				finalizado = true; 
+				break;
 			}
 			
 			
