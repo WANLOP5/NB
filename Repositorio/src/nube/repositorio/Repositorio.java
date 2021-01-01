@@ -110,6 +110,17 @@ public class Repositorio {
 		}
 	}
 	
+	// Borra las carpetas de los clientes de este repositorio antes de cerrar el programa
+	private static void borrarCarpetasClientes() {
+		// Recorrer la lista de carpetas del repositorio y obtener cada nombre
+		for(String carpeta : carpetasRepositorio) {
+			File carpetaDisco = new File(carpeta);
+			// Borrar la carpeta
+			if(!carpetaDisco.delete()) 
+				System.err.println("(ERROR) NO SE PUDO BORRAR LA CARPETA "+carpeta);
+		}
+	}
+	
 	// Funcion que contiene bucle que alojara el menu de registro del programa 
 	// hasta que se de por finalizado
 	private static boolean bucleMenuRegistro() {
@@ -202,6 +213,7 @@ public class Repositorio {
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
 				}
+				borrarCarpetasClientes();
 				finalizado = true; 
 				break;
 			} 
