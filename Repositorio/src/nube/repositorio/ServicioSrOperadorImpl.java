@@ -60,18 +60,32 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 	public boolean crearCarpetaCliente(int idCliente) throws RemoteException {
 		// Crear objeto archivo para la carpeta
 		File carpeta = new File(""+idCliente);
+		boolean carpetaCreada = false;
 		
-		// Devolvera true si la operacion es exitosa
-		boolean carpetaCreada = carpeta.mkdir(); 
+		// Si la carpeta ya existe, solo hay que borrar los ficheros que contenia
+		if(carpeta.exists()) {
+			for(String s: carpeta.list()){
+			    File fichero = new File(carpeta.getPath(),s);
+			    fichero.delete();
+			}
+			
+			// Si la carpeta queda vacia se puede usar para el cliente
+			carpetaCreada = true;
+			
+		} else { // Si la carpeta no existe hay que intentar crearla
+			// Devolvera true si la operacion es exitosa
+			carpetaCreada = carpeta.mkdir(); 
+		}
 		
 		if(carpetaCreada) {			
 			System.out.println("\n[+] LA CARPETA DEL CLIENTE "+ idCliente + " HA SIDO CREADA");
 		
 			// Ingresara la nueva carpeta a la lista del repositorio
 			Repositorio.insertarCarpetaCliente(idCliente);
-		}else {
+		} else {
 			System.err.println("\n(ERROR) NO SE PUDO CREAR LA CARPETA PARA EL CLIENTE "+idCliente);
 		}
+		
 		return carpetaCreada;
 	}
 	

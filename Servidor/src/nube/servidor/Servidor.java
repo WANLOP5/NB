@@ -127,6 +127,7 @@ public class Servidor {
 			switch(opcion) {
 			case 1:
 				try {
+					System.out.println("\nDATOS: (NOMBRE_CLIENTE=ID_CLIENTE)");
 					System.out.println(gestor.listarClientes());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
@@ -141,6 +142,7 @@ public class Servidor {
 			// #####################################	
 			case 2: 
 				try {
+					System.out.println("\nDATOS: (NOMBRE_REPOSITORIO=ID_REPOSITORIO)");
 					System.out.println(gestor.listarRepositorios());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");
@@ -155,6 +157,7 @@ public class Servidor {
 			// ####################################
 			case 3: 
 				try {
+					System.out.println("\nDATOS: (ID_CLIENTE=ID_REPOSITORIO)");
 					System.out.println(gestor.listarClientesRepositorios());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) ERROR EN LA CONEXION CON EL SERVICIO GESTOR");

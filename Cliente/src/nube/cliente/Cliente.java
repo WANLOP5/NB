@@ -375,6 +375,7 @@ public class Cliente {
 			// ######################################
 			case 5: 
 				try {
+					System.out.println("\nDATOS: (NOMBRE_CLIENTE=ID_CLIENTE)");
 					// Listar los clientes del sistema utilizando el ServicioGestor
 					System.out.println(srgestor.listarClientes());
 				} catch (RemoteException e) {
@@ -420,22 +421,25 @@ public class Cliente {
 		// Imprimir el bucle de registro y comprobar si el cliente se autentica o no
 		boolean autenticado = bucleMenuRegistro();
 		
-		// Iniciar el registroRMI para los servicios del cliente
-		Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
+		if(autenticado) {
+			// Iniciar el registroRMI para los servicios del cliente
+			Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
+				
+			// Insertar el ServicioDiscoCliente en el registro rmi
+			iniciarDiscoCliente();
+			// Localizar el ServicioClienteOperador del repositorio en el registro rmi
+			localizarClienteOperador();
 			
-		// Insertar el ServicioDiscoCliente en el registro rmi
-		iniciarDiscoCliente();
-		// Localizar el ServicioClienteOperador del repositorio en el registro rmi
-		localizarClienteOperador();
+			// iniciar el bucle con el menu principal
+			bucleMenuPrincipal();
+			
+			// Tumbar el servicio iniciado en el registro rmi por el cliente
+			tumbarDiscoCliente();
+			
+			// Intentar tumbar el registro rmi usado por el cliente
+			Utilidades.tumbarRegistro(registroRMI);
+		}
 		
-		// Si el cliente esta autenticado iniciar el bucle con el menu principal
-		if(autenticado) bucleMenuPrincipal();
-		
-		// Tumbar el servicio iniciado en el registro rmi por el cliente
-		tumbarDiscoCliente();
-		
-		// Intentar tumbar el registro rmi usado por el cliente
-		Utilidades.tumbarRegistro(registroRMI);
 		// Cerrar el programa indicandole al sistema que acabo sin errores
 		System.exit(0);
 	}

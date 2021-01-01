@@ -20,6 +20,7 @@ import java.util.List;
 import nube.comun.IConsola;
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioClOperadorInterface;
+import nube.comun.ServicioGestorInterface;
 import nube.comun.ServicioSrOperadorInterface;
 import nube.comun.Utilidades;
 
@@ -31,7 +32,7 @@ public class Repositorio {
 	private static int puertoRepositorio, puertoServidor;
 	
 	// URLs para los servicios rmi.
-	private static String URLAutenticador, URLClienteOperador, URLServidorOperador;
+	private static String URLAutenticador, URLGestor, URLClienteOperador, URLServidorOperador;
 	
 	// Objetos para iniciar los servicios del repositorio
 	private static ServicioClOperadorImpl clienteOperador;
@@ -39,6 +40,7 @@ public class Repositorio {
 	
 	// Objetos para localizar los servicios del servidor
 	private static ServicioAutenticacionInterface srautenticador;
+	private static ServicioGestorInterface srgestor;
 	
 	// ID del repositorio autenticado
 	private static int idRepositorio;
@@ -56,6 +58,23 @@ public class Repositorio {
 			System.out.println("[+] SERVICIO AUTENTICADOR LOCALIZADO EN EL SERVIDOR");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL AUTENTICADOR");
+			System.exit(1);
+		}
+		
+	}
+	
+	// Localiza el servicio gestor en el registro e inicializa el objeto remoto
+	private static void localizarGestor() {
+		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
+		
+		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
+		try {
+			srgestor= (ServicioGestorInterface) Naming.lookup(URLGestor);
+			System.out.println("[+] SERVICIO GESTOR LOCALIZADO EN EL SERVIDOR");
+			
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL SERVICIO GESTOR");
+			
 			System.exit(1);
 		}
 		
@@ -107,17 +126,6 @@ public class Repositorio {
 			System.out.println("[+] SERVIDOR OPERADOR TUMBADO CON EXITO");
 		} catch (RemoteException | NotBoundException | MalformedURLException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR TUMBANDO EL SERVICIO SERVIDOR OPERADOR");
-		}
-	}
-	
-	// Borra las carpetas de los clientes de este repositorio antes de cerrar el programa
-	private static void borrarCarpetasClientes() {
-		// Recorrer la lista de carpetas del repositorio y obtener cada nombre
-		for(String carpeta : carpetasRepositorio) {
-			File carpetaDisco = new File(carpeta);
-			// Borrar la carpeta
-			if(!carpetaDisco.delete()) 
-				System.err.println("(ERROR) NO SE PUDO BORRAR LA CARPETA "+carpeta);
 		}
 	}
 	
@@ -177,6 +185,7 @@ public class Repositorio {
 		return autenticado;
 	}
 	
+	
 	// Funcion que contiene el bucleque alojara el menu principal del programa hasta que 
 	// se de por finalizado
 	private static void bucleMenuPrincipal() {
@@ -191,7 +200,16 @@ public class Repositorio {
 			// Si se elige la opcion listar clientes
 			// ######################################
 			case 1 : 
-				System.out.println(carpetasRepositorio);
+				System.out.println("\nDATOS: NOMBRE_CLIENTE(ID_CLIENTE)\n");
+				try {
+					for(String idCliente : carpetasRepositorio) {
+						String nombreCliente = srgestor.buscarNombreCliente(Integer.parseInt(idCliente));
+						System.out.println(nombreCliente + "(" + idCliente + ")");
+					}
+				} catch(RemoteException e) {
+					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
+				}
+				
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
@@ -225,8 +243,7 @@ public class Repositorio {
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
 				}
-				// Borrar las carpetas de clientes del repositorio
-				borrarCarpetasClientes();
+
 				finalizado = true; 
 				break;
 			} 
@@ -244,27 +261,32 @@ public class Repositorio {
 		
 		// Localizar el ServicioAutenticacion del servidor para registrar y autenticar
 		localizarAutenticador();
+		// Localizar el ServicioGestor del servidor para interactuar con la base de datos
+		localizarGestor();
 		// Imprimir el bucle de registro y comprobar si el repositorio se autentica o no
 		boolean autenticado = bucleMenuRegistro();
 		
-		// Iniciar el registroRMI para los servicios del repositorio
-		Registry registroRMI = Utilidades.iniciarRegistro(puertoRepositorio);
+		if(autenticado) {
+			// Iniciar el registroRMI para los servicios del repositorio
+			Registry registroRMI = Utilidades.iniciarRegistro(puertoRepositorio);
+			
+			// Insertar el ServicioClOperador en el registro rmi
+			iniciarClienteOperador();
+			// Insertar el ServicioSrOperador en el registro rmi
+			iniciarServidorOperador();
+			
+			// Si el repositorio esta autenticado iniciar el bucle con el menu principal
+			if(autenticado) bucleMenuPrincipal();
+			
+			// Sacar el ServicioClOperador del registro rmi
+			tumbarClienteOperador();
+			// Sacar el ServicioSrOperador del registro rmi
+			tumbarServidorOperador();
+			
+			// Intentar tumbar el registro rmi usado por el repositorio
+			Utilidades.tumbarRegistro(registroRMI);
+		}
 		
-		// Insertar el ServicioClOperador en el registro rmi
-		iniciarClienteOperador();
-		// Insertar el ServicioSrOperador en el registro rmi
-		iniciarServidorOperador();
-		
-		// Si el repositorio esta autenticado iniciar el bucle con el menu principal
-		if(autenticado) bucleMenuPrincipal();
-		
-		// Sacar el ServicioClOperador del registro rmi
-		tumbarClienteOperador();
-		// Sacar el ServicioSrOperador del registro rmi
-		tumbarServidorOperador();
-		
-		// Intentar tumbar el registro rmi usado por el repositorio
-		Utilidades.tumbarRegistro(registroRMI);
 		// Cerrar el programa indicandole al sistema que acabo sin errores
 		System.exit(0);
 	}
