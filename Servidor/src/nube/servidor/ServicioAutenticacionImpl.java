@@ -53,6 +53,10 @@ implements ServicioAutenticacionInterface {
 		int nuevaSesion = getSesion();
 		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
 		
+		if(identificador > 0) 
+			System.out.println("\n[+] EL CLIENTE "+nombre+
+					" SE HA AUTENTICADO CON SESION "+nuevaSesion);
+		
 		return identificador;
 	}
 
@@ -65,6 +69,10 @@ implements ServicioAutenticacionInterface {
 	public int autenticarRepositorio(String nombre) throws RemoteException {
 		int nuevaSesion = getSesion();
 		int identificador = baseDatos.insertarSesionRepositorio(nombre, nuevaSesion);
+		
+		if(identificador > 0) 
+			System.out.println("\n[+] EL REPOSITORIO "+nombre+
+					" SE HA AUTENTICADO CON SESION "+nuevaSesion);
 
 		return identificador;
 	}
@@ -76,6 +84,10 @@ implements ServicioAutenticacionInterface {
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException {
 		int identificador = baseDatos.insertarCliente(nombre, getSesion());
 		
+		if(identificador > 0) 
+			System.out.println("\n[+] EL CLIENTE "+nombre+
+					" SE HA REGISTRADO CON ID "+identificador);
+		
 		return identificador;
 	}
 
@@ -85,6 +97,10 @@ implements ServicioAutenticacionInterface {
 	@Override
 	public int registrarRepositorio(String nombre) throws RemoteException {
 		int identificador = baseDatos.insertarRepositorio(nombre, getSesion());
+		
+		if(identificador > 0) 
+			System.out.println("\n[+] EL REPOSITORIO "+nombre+
+					" SE HA REGISTRADO CON ID "+identificador);
 		
 		return identificador;
 	}
