@@ -34,7 +34,9 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
 		
 		
 		OutputStream salidaFichero;
-		String nombreFichero = objetoFichero.obtenerNombre();
+		String idCliente = objetoFichero.obtenerPropietario();
+		// El fichero se descargara con el idcliente + el nombre original del fichero
+		String nombreFichero = "("+idCliente+")"+objetoFichero.obtenerNombre();
 		
 		try {
 			salidaFichero = new FileOutputStream(nombreFichero);
