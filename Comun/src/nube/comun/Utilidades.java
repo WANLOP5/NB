@@ -1,20 +1,16 @@
 /** Clase utilidades
- * 	esta clase contiene los metodos cambiar CODEBASE,iniciar un registro y tumbar un registro del sistema.
+ * 	esta clase contiene los metodos cambiar CODEBASE,
+ * iniciar un registro y tumbar un registro rmi.
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es
  */
 
 package nube.comun;
 
-import java.net.BindException;
-import java.rmi.NoSuchObjectException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 
 public class Utilidades {	
 	// Nombre de la propiedad codebase
@@ -62,7 +58,6 @@ public class Utilidades {
 				UnicastRemoteObject.unexportObject(registroRMI, true);			
 		} catch (RemoteException e) {
 			System.err.println("(ERROR) NO SE PUDO TUMBAR EL REGISTRO RMI");
-			e.printStackTrace();
 			System.exit(1);
 		}
 	}

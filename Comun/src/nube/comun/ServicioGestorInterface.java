@@ -8,8 +8,6 @@ package nube.comun;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
 
 public interface ServicioGestorInterface extends Remote {
 	/* Utiliza la base de datos para insertar un nuevo fichero al sistema

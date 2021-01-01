@@ -1,3 +1,7 @@
+/** Fichero proporcionado por el equipo docente para manejar los datos de los ficheros
+ * con objetos y realizar operaciones de escritura.
+ */
+
 package nube.comun;
 
 import java.io.*;

@@ -29,6 +29,7 @@ public class Servidor {
 	private static ServicioAutenticacionImpl autenticador;
 	private static ServicioGestorImpl gestor;	
 	
+	// Pone a correr el servicio base de datos y lo ingresa al registro rmi
 	private static void iniciarBaseDatos() {
 		Utilidades.cambiarCodeBase(ServicioDatosInterface.class);
 		URLBaseDatos = "rmi://localhost:" + puertoServidor + "/baseDatos";
@@ -44,6 +45,7 @@ public class Servidor {
 		}
 	}
 	
+	// Pone a correr el servicio de autenticacion y lo ingresa al registro rmi
 	private static void iniciarAutenticador() {
 		Utilidades.cambiarCodeBase(ServicioAutenticacionInterface.class);
 		URLAutenticador = "rmi://localhost:" + puertoServidor + "/autenticador";
@@ -60,6 +62,7 @@ public class Servidor {
 		
 	}
 	
+	// Pone a correr el servicio gestor y lo ingresa al registro rmi
 	private static void iniciarGestor() {
 		Utilidades.cambiarCodeBase(ServicioGestorInterface.class);
 		URLGestor = "rmi://localhost:" + puertoServidor + "/gestor";
@@ -77,6 +80,7 @@ public class Servidor {
 	
 	}
 	
+	// Tumba el servicio base de datos y lo saca del registro rmi
 	private static void tumbarBaseDatos() {
 		try {
 			Naming.unbind(URLBaseDatos);
@@ -86,6 +90,7 @@ public class Servidor {
 		} 
 	}
 	
+	// Tumba el servicio autenticador y lo saca del registro rmi
 	private static void tumbarAutenticador() {
 		try {
 			Naming.unbind(URLAutenticador);
@@ -95,6 +100,7 @@ public class Servidor {
 		} 
 	}
 
+	// Tumba el servicio gestor y lo saca del registro rmi
 	private static void tumbarGestor() {
 		try {
 			Naming.unbind(URLGestor);
@@ -105,8 +111,10 @@ public class Servidor {
 		}  
 	}
 
-	
+	// Funcion que contiene bucle que alojara el menu principal del programa hasta 
+	// que se de por finalizado
 	public static void bucleMenuPrincipal() {
+		// Variable que mantendra el bucle corriendo
 		boolean finalizado = false;
 		
 		do {
@@ -114,6 +122,9 @@ public class Servidor {
 					"Listar parejas cliente-repositorio", "Salir"};
 			int opcion = IConsola.desplegarMenu("Servidor", opciones);
 			
+			// ######################################
+			// Si se elige la opcion listar clientes
+			// ######################################
 			switch(opcion) {
 			case 1:
 				try {
@@ -125,6 +136,10 @@ public class Servidor {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// #####################################
+			// Si se elige la opcion listar repositorios
+			// #####################################	
 			case 2: 
 				try {
 					System.out.println(gestor.listarRepositorios());
@@ -135,6 +150,10 @@ public class Servidor {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+			
+			// ####################################
+			// Si se elige la opcion listar parejas clientes-repositorios
+			// ####################################
 			case 3: 
 				try {
 					System.out.println(gestor.listarClientesRepositorios());
@@ -145,6 +164,10 @@ public class Servidor {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// ###################################
+			// Si se elige la opcion salir
+			// ###################################
 			case 4: finalizado = true; break;
 			}
 			
@@ -152,21 +175,33 @@ public class Servidor {
 		} while(!finalizado);
 	}
 	
+	// Metodo principal de la clase 
 	public static void main(String[] args) {
+		// Inicializar el puerto del servidor
 		puertoServidor = 9091;
+		
+		// Iniciar el registroRMI para los servicios del servidor
 		Registry registroRMI = Utilidades.iniciarRegistro(puertoServidor);
 		
+		// Insertar el ServicioDatos en el registro rmi
 		iniciarBaseDatos();
+		// Insertar el ServicioAutenticacion en el registro rmi
 		iniciarAutenticador();
+		// Insertar el ServicioGestor en el registro rmi
 		iniciarGestor();
 	
+		// Inicia el bucle del menu principal del servidor
 		bucleMenuPrincipal();
 		
+		// Tumbar el ServicioDatos del registro rmi 
 		tumbarBaseDatos();
+		// Tumbar el ServicioAutenticacion del registro rmi 
 		tumbarAutenticador();
+		// Tumbar el ServicioGestor del registro rmi 
 		tumbarGestor();
-		
+		// Intentar tumbar el registro rmi usado por el servidor
 		Utilidades.tumbarRegistro(registroRMI);
+		// Cerrar el programa indicandole al sistema que acabo sin errores
 		System.exit(0);
 	}
 }

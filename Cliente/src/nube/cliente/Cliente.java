@@ -1,7 +1,14 @@
+/** Clase cliente es la clase que contiene el metodo principal para los clientes
+ *  hace uso de las funcionalidades de los servicios del servidor y del repositorio y 
+ *  permite al usuario interactuar con la interfaz en consola para listar ficheros, listar
+ *  clientes y subir,borrar y bajar ficheros de su repositorio
+ * 
+ * @author Wanderson López Veras, wan_lop05@outlook.es
+ */
+
 package nube.cliente;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -12,14 +19,9 @@ import nube.comun.Fichero;
 import nube.comun.IConsola;
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioClOperadorInterface;
-import nube.comun.ServicioDatosInterface;
 import nube.comun.ServicioDiscoClienteInterface;
 import nube.comun.ServicioGestorInterface;
 import nube.comun.Utilidades;
-import nube.servidor.ServicioAutenticacionImpl;
-import nube.servidor.ServicioDatosImpl;
-import nube.servidor.ServicioGestorImpl;
-import nube.repositorio.ServicioClOperadorImpl;
 
 public class Cliente {
 	// Puertos de los servicios en rmi
@@ -41,7 +43,6 @@ public class Cliente {
 	
 	
 	// Datos de este cliente
-	private static String nombreCliente;
 	private static int idCliente, idRepositorioCliente;
 		
 	// Localiza el servicio autenticador en el registro e inicializa el objeto remoto
@@ -181,7 +182,6 @@ public class Cliente {
 						System.out.println("\n[+] "+nombre + " SE HA AUTENTICADO EN EL SISTEMA");
 						
 						// Inicializar los datos del cliente con el id retornado
-						nombreCliente = srgestor.buscarNombreCliente(idCliente);
 						idRepositorioCliente = srgestor.buscarRepositorio(idCliente);
 						
 						// Ruta absoluta donde se crean las carpetas
@@ -207,6 +207,7 @@ public class Cliente {
 		return autenticado;
 	}
 	
+	// Comprueba que el fichero no es una carpeta y que el fichero existe en el disco
 	private static boolean comprobarFichero(String URIFichero) {		
 		File ficheroDisco = new File(URIFichero);
 				
@@ -221,30 +222,40 @@ public class Cliente {
 	// Funcion que contiene bucle que alojara el menu principal del programa hasta 
 	// que se de por finalizado
 	private static void bucleMenuPrincipal() {
+		// Variable que mantendra el bucle corriendo
 		boolean finalizado = false;
 		
 		do {
 			String opciones[] = {"Subir fichero", "Bajar fichero", "Borrar fichero",
-								"Listar ficheros", "Listar clientes", "Salir"};
+								"Listar ficheros", "Listar clientes del sistema", "Salir"};
 			int opcion = IConsola.desplegarMenu("Cliente", opciones);
 			
 			switch(opcion) {
-			case 1: 
+			
+			// ######################################
+			// Si se elige la opcion subir fichero
+			// ######################################
+			case 1:
+				// Pide el nombre del fichero a subir
 				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
 				
+				// Comprueba que el fichero existe en el disco y no es una carpeta
 				if(!comprobarFichero(URIFichero)) break;
 					
 				try {
 					Fichero nuevoFichero = new Fichero(URIFichero, ""+idCliente);
+					
+					// Utiliza el ServicioGestor para ingresar el fichero a la base de datos
 					if(srgestor.subirFichero(idCliente, URIFichero) == -1) 
 						System.err.println("\n(ERROR) EXISTE UN FICHERO CON EL MISMO NOMBRE");
 					
+					// Utiliza el cliente operador para alojar el fichero fisico en el repositorio
 					if(!clienteOperador.subirFichero(nuevoFichero)) 
 						System.err.println("\n(ERROR) NO SE PUDO SUBIR EL FICHERO");
 					
 					
 				} catch(RemoteException e) {
-					System.err.println("(ERROR) INESPERADO FUNCIONAMIENTO DE LOS SERVICIOS");
+					System.err.println("(ERROR) FUNCIONAMIENTO INESPERADO DE LOS SERVICIOS");
 					System.exit(1);
 				}
 				
@@ -253,15 +264,30 @@ public class Cliente {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// ######################################
+			// Si se elige la opcion bajar fichero  
+			// ######################################	
 			case 2: 
 				try {
-					System.out.println(srgestor.listarFicheros(idCliente));
-					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
+					// Obtener la lista de ficheros y la cantidad de ficheros del cliente
+					String[] ficherosCliente = srgestor.listarFicheros(idCliente);
+					// listaFicheros[0] es la lista de ficheros
+					// listaFicheros[1] es la cantidad de ficheros
+					String listaFicheros = ficherosCliente[0];
+					int cantidadFicheros = Integer.parseInt(ficherosCliente[1]);
+
+					// Mostrar la lista de ficheros disponibles para bajar
+					System.out.println(listaFicheros);
+					// Pedir que se elija un fichero de la lista
+					int idFichero = IConsola.pedirOpcion(cantidadFicheros);
 					
+					// Indicarle al servicio gestor que baje el fichero
 					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLDiscoCliente);
 					
+					// Si el nombre del fichero retornado es nulo no lo pudo encontrar
 					if(nombreFichero == null) { 
-						System.err.println("(ERROR) NO SE PUDO BAJAR EL FICHERO");
+						System.err.println("(ERROR) EL FICHERO QUE DESEA BAJAR NO EXISTE");
 						break;
 					}
 					
@@ -276,19 +302,43 @@ public class Cliente {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+			
+			// ######################################
+			// Si se elige la opcion borrar fichero
+			// ######################################
 			case 3: 
 				try {
-					System.out.println(srgestor.listarFicheros(idCliente));
-					int idFichero = Integer.parseInt(IConsola.pedirDato("ELIJA ID DE FICHERO"));
+					String[] ficherosCliente = srgestor.listarFicheros(idCliente);
+					// listaFicheros[0] es la lista de ficheros
+					// listaFicheros[1] es la cantidad de ficheros
+					String listaFicheros = ficherosCliente[0];
+					int cantidadFicheros = Integer.parseInt(ficherosCliente[1]);
+
+					// Imprimir la lista de ficheros por pantalla
+					System.out.println(listaFicheros);
+					int idFichero = IConsola.pedirOpcion(cantidadFicheros);
+					
+					// Obtener el nombre del fichero del cliente con el ServicioGestor
 					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
+					// El nombre de la carpeta es el nombre del cliente al que le pertenece
 					String carpetaFichero = "" + idCliente;
 					
+					if(nombreFichero == null) { 
+						System.err.println("(ERROR) EL FICHERO QUE DESEA BAJAR NO EXISTE");
+						break;
+					}
+					
+					// Borrar el fichero de la base de datos utilizando el ServicioGestor
 					if(srgestor.borrarFichero(idFichero, idCliente) == -1) {
 						System.err.println("(ERROR) EL ARCHIVO NO LE PERTENECE AL CLIENTE");
 						break;
 					}
 					
-					if(!clienteOperador.borrarFichero(nombreFichero, carpetaFichero)) break;
+					// Borrar el fichero del disco utilizando el ServicioClienteOperador
+					if(!clienteOperador.borrarFichero(nombreFichero, carpetaFichero)) {
+						System.err.println("(ERROR) NO SE PUDO BORRAR EL FICHERO DEL DISCO DEL CLIENTE");
+						break;
+					}
 					
 					System.out.println("[+] FICHERO "+nombreFichero+ ", BORRADO CON EXITO DE "
 							+ "LA CARPETA DEL CLIENTE "+ idCliente);
@@ -301,11 +351,16 @@ public class Cliente {
 				
 				IConsola.pausar();
 				IConsola.limpiarConsola();
-				
 				break;
+				
+			// ######################################
+			// Si se elige la opcion listar ficheros
+			// ######################################
 			case 4: 
 				try {
-					System.out.println(srgestor.listarFicheros(idCliente));
+					// Listar los ficheros del cliente utilizando el ServicioGestor
+					String listaFicheros = srgestor.listarFicheros(idCliente)[0];
+					System.out.println(listaFicheros);
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
 					System.exit(1);
@@ -314,8 +369,13 @@ public class Cliente {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// ######################################
+			// Si se elige la opcion listar clientes
+			// ######################################
 			case 5: 
 				try {
+					// Listar los clientes del sistema utilizando el ServicioGestor
 					System.out.println(srgestor.listarClientes());
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
@@ -324,13 +384,19 @@ public class Cliente {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// ######################################
+			// Si se elige la opcion salir
+			// ######################################
 			case 6:
 				try { 
+					// Llama al autenticador para desconectar el cliente borrando la sesion
 					srautenticador.desconectarCliente(idCliente);
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
 				}
 				
+				// Finalizado pasa a ser true para salir del bucle while y terminar la funcion
 				finalizado = true; 
 				break;
 			}
@@ -339,27 +405,38 @@ public class Cliente {
 		} while(!finalizado);
 	}
 	
+	// Metodo principal de la clase 
 	public static void main(String[] args) {
-		// Inicializando los puertos de los distintos servicios.
+		// Inicializar los puertos de los distintos servicios.
 		puertoServidor = 9091;
 		puertoRepositorio = 9092;
 		puertoCliente = 9093;
 		
+		// Localizar el ServicioAutenticacion del servidor para registrar y autenticar
 		localizarAutenticador();
+		// Localizar el ServicioGestor del servidor para interactuar con la base de datos 
 		localizarGestor();
 		
+		// Imprimir el bucle de registro y comprobar si el cliente se autentica o no
 		boolean autenticado = bucleMenuRegistro();
 		
+		// Iniciar el registroRMI para los servicios del cliente
 		Registry registroRMI = Utilidades.iniciarRegistro(puertoCliente);
 			
+		// Insertar el ServicioDiscoCliente en el registro rmi
 		iniciarDiscoCliente();
+		// Localizar el ServicioClienteOperador del repositorio en el registro rmi
 		localizarClienteOperador();
 		
+		// Si el cliente esta autenticado iniciar el bucle con el menu principal
 		if(autenticado) bucleMenuPrincipal();
 		
+		// Tumbar el servicio iniciado en el registro rmi por el cliente
 		tumbarDiscoCliente();
 		
+		// Intentar tumbar el registro rmi usado por el cliente
 		Utilidades.tumbarRegistro(registroRMI);
+		// Cerrar el programa indicandole al sistema que acabo sin errores
 		System.exit(0);
 	}
 }

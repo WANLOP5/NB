@@ -1,6 +1,6 @@
 /** Interfaz Servicio Autenticacion Interface.
- * La interfaz con sus respectivos metodos para registrar y autenticar tanto clientes como repositorios.
- * 
+ * La interfaz con sus respectivos metodos para registrar y autenticar 
+ * tanto clientes como repositorios.
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es
  */
@@ -14,22 +14,22 @@ import java.rmi.RemoteException;
 
 public interface ServicioAutenticacionInterface extends Remote{
 	
-	// metodo para registrar un cliente en el servidor
+	// Metodo para registrar un cliente en el servidor
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException;
 	
-	// metodo para autenticar un cliente en el servidor
+	// Metodo para autenticar un cliente en el servidor
 	public int autenticarCliente(String nombre) throws RemoteException;
 	
-	// metodo para desconectar un cliente
+	// Metodo para desconectar un cliente
 	public void desconectarCliente(int idCliente) throws RemoteException;
 		
-	// metodo para registrar un repositorio en el servidor
+	// Metodo para registrar un repositorio en el servidor
 	public int registrarRepositorio(String nombre) throws RemoteException;
 	
-	// metodo para autenticar un repositorio en el servidor
+	// Metodo para autenticar un repositorio en el servidor
 	public int autenticarRepositorio(String nombre) throws RemoteException;
 	
-	// metodo para desconectar un repositorio 
+	// Metodo para desconectar un repositorio 
 	public void desconectarRepositorio(int idRepositorio) throws RemoteException;
 	
 	

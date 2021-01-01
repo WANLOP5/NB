@@ -18,20 +18,23 @@ import nube.comun.ServicioGestorInterface;
 import nube.comun.ServicioSrOperadorInterface;
 
 public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioGestorInterface {
+	// Atributo generado por eclipse al heredar de UnicastRemoteObject
 	private static final long serialVersionUID = 1L;
 	/* Atributos para localizar la base de datos y 
 	* el ServicioServidorOperador en el rmiregistry */
 	private int puertoBaseDatos, puertoSrOperador;
+	// URLs RMI para localizar el ServicioDatos y el ServicioSrOperador
 	private String URLBaseDatos, URLServidorOperador;
+	// Objetos remotos para alojar los servicios localizados en el registro RMI
 	private ServicioDatosInterface baseDatos;
 	private ServicioSrOperadorInterface servidorOperador;
-	
+
 	
 	// Inicializa y localiza los servicios baseDatos y servidorOperador en el rmiregistry
 	public ServicioGestorImpl() throws RemoteException, MalformedURLException, NotBoundException { 
 		super();
 	
-		// Localiza el set= 9091;
+		// Localiza el el ServicioDatos
 		puertoBaseDatos = 9091;
 		URLBaseDatos = "rmi://localhost:"+puertoBaseDatos+"/baseDatos";
 		localizarBaseDatos(URLBaseDatos);
@@ -41,10 +44,12 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		
 	}
 	
+	// Localiza el ServicioSrOperador pasandole la URL RMI
 	private void localizarServidorOperador(String URL) throws RemoteException, MalformedURLException, NotBoundException {
 		servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URL);
 	}
 	
+	// Localiza el ServicioDatos pasandole la URL RMI
 	private void localizarBaseDatos(String URL) throws MalformedURLException, RemoteException, NotBoundException {
 		baseDatos = (ServicioDatosInterface) Naming.lookup(URL);
 	}
@@ -103,6 +108,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 		return baseDatos.buscarRepositorio(idCliente);
 	}
 	
+	// Busca el nombre de un cliente con el id 
 	public String buscarNombreCliente(int idCliente) throws RemoteException {
 		return baseDatos.buscarNombreCliente(idCliente);
 	}
@@ -129,7 +135,5 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	public String[] listarFicheros(int idCliente) throws RemoteException {
 		return baseDatos.listarFicherosCliente(idCliente);
 	}
-	
-
 
 }

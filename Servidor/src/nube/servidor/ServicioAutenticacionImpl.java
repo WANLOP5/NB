@@ -11,34 +11,39 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
 import nube.comun.ServicioAutenticacionInterface;
 import nube.comun.ServicioDatosInterface;
-import nube.comun.ServicioSrOperadorInterface;
 
-//implementacion de la interfaz ServicioAutenticacionInterface
+// implementacion de la interfaz ServicioAutenticacionInterface
 public class ServicioAutenticacionImpl extends UnicastRemoteObject 
 implements ServicioAutenticacionInterface {
+	// Atributo generado por eclipse al heredar de UnicastRemoteObject
+	private static final long serialVersionUID = 1L;
+	// Identificador unico de servidores y repositorios
+	private static int sesion = 1;
+	// Atributos para localizar el la base de datos en el registro RMI
+	private static int puertoServidor; 
+	private static String URLBaseDatos;
+	// Objeto remoto para localizar la base de datos en el registro RMI
+	private static ServicioDatosInterface baseDatos; 
 	
 	
-	private static final long serialVersionUID = 8325119378408210655L; // numero serial generado por eclipse
-	private static int sesion = 1; //identificador unico para los clientes y los repositorios
-	private static int puerto = 9091; // numero de puerto para el servicio los servicios de los clientes y los repositorios
-	
-	private static ServicioDatosInterface baseDatos; // almacen de datos 
-	
-	
-	// constructor generado por la clase, sirve para buscar en el almacen de datos
+	// Constructor que inicializa los atributos para localizar el servicioDatos
 	public ServicioAutenticacionImpl() throws RemoteException, MalformedURLException, NotBoundException {
 		super();
 		
-		String URLRegistro = "rmi://localhost:" + puerto + "/baseDatos";
-		baseDatos = (ServicioDatosInterface) Naming.lookup(URLRegistro);
+		puertoServidor = 9091;
+		URLBaseDatos = "rmi://localhost:" + puertoServidor + "/baseDatos";		
+		localizarBaseDatos(URLBaseDatos);
 	}
+	
+	// Localiza el ServicioDatos pasandole la URL RMI
+	private void localizarBaseDatos(String URL) throws MalformedURLException, RemoteException, NotBoundException {
+		baseDatos = (ServicioDatosInterface) Naming.lookup(URL);
+	}
+	
 	/* metodo para autenticar un cliente en el sistema.
 	 * requiere el nombre del cliente que se quiere autenticar en el sistema.
 	 * el identificador del cliente que se haya autenticado. 

@@ -187,11 +187,18 @@ public class Repositorio {
 			int opcion = IConsola.desplegarMenu("Repositorio", opciones);
 			
 			switch(opcion) {
+			// ######################################
+			// Si se elige la opcion listar clientes
+			// ######################################
 			case 1 : 
 				System.out.println(carpetasRepositorio);
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+			
+			// ######################################
+			// Si se elige la opcion listar ficheros de los clientes
+			// ######################################
 			case 2 : 
 				System.out.println(carpetasRepositorio);
 				String carpeta = IConsola.pedirDato("NOMBRE DE CARPETA");
@@ -207,12 +214,18 @@ public class Repositorio {
 				IConsola.pausar();
 				IConsola.limpiarConsola();
 				break;
+				
+			// ######################################
+			// Si se elige la opcion salir
+			// ######################################
 			case 3:
+				// Cuando el repositorio se cierra se debe desconectar borrando su sesion
 				try { 
 					srautenticador.desconectarRepositorio(idRepositorio);
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO AUTENTICADOR");
 				}
+				// Borrar las carpetas de clientes del repositorio
 				borrarCarpetasClientes();
 				finalizado = true; 
 				break;
@@ -220,6 +233,7 @@ public class Repositorio {
 		} while(!finalizado);		
 	}
 	
+	// Metodo principal de la clase 
 	public static void main(String [] args) {
 		// Inicializando la lista de carpetas
 		carpetasRepositorio = new ArrayList<String>();
@@ -228,20 +242,30 @@ public class Repositorio {
 		puertoServidor = 9091;
 		puertoRepositorio = 9092;
 		
+		// Localizar el ServicioAutenticacion del servidor para registrar y autenticar
 		localizarAutenticador();
+		// Imprimir el bucle de registro y comprobar si el repositorio se autentica o no
 		boolean autenticado = bucleMenuRegistro();
 		
+		// Iniciar el registroRMI para los servicios del repositorio
 		Registry registroRMI = Utilidades.iniciarRegistro(puertoRepositorio);
 		
+		// Insertar el ServicioClOperador en el registro rmi
 		iniciarClienteOperador();
+		// Insertar el ServicioSrOperador en el registro rmi
 		iniciarServidorOperador();
 		
+		// Si el repositorio esta autenticado iniciar el bucle con el menu principal
 		if(autenticado) bucleMenuPrincipal();
 		
+		// Sacar el ServicioClOperador del registro rmi
 		tumbarClienteOperador();
+		// Sacar el ServicioSrOperador del registro rmi
 		tumbarServidorOperador();
 		
+		// Intentar tumbar el registro rmi usado por el repositorio
 		Utilidades.tumbarRegistro(registroRMI);
+		// Cerrar el programa indicandole al sistema que acabo sin errores
 		System.exit(0);
 	}
 }

@@ -1,5 +1,6 @@
 /** Implementacion de la interfaz ServicioSrOperadorInterface 
- *  Esta clase contiene un constructor por defecto y dos metodos bajar fichero para descargar un fichero del repositorio 
+ *  Esta clase contiene un constructor por defecto y dos metodos: 
+ *  bajarFichero para descargar un fichero del repositorio 
  *  y crear carpeta repositorio.
  *  
  * 
@@ -66,7 +67,7 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 		if(carpetaCreada) {			
 			System.out.println("\n[+] LA CARPETA DEL CLIENTE "+ idCliente + " HA SIDO CREADA");
 		
-			// Ingresara la nueva carpeta 
+			// Ingresara la nueva carpeta a la lista del repositorio
 			Repositorio.insertarCarpetaCliente(idCliente);
 		}else {
 			System.err.println("\n(ERROR) NO SE PUDO CREAR LA CARPETA PARA EL CLIENTE "+idCliente);

@@ -1,4 +1,4 @@
-/** Clase IGrafica es una interfaz gráfica que brinda métodos para facilitar 
+/** Clase IConsola es una interfaz de consola que brinda métodos para facilitar 
  * la interacción del programa del Servidor, Cliente y Repositorio con el usuario en la consola.
  * 
  * @author Wanderson López Veras, wan_lop05@outlook.es
@@ -65,6 +65,7 @@ public class IConsola {
 		return respuesta;
 	}
 	
+	// Metodo para pausar el programa esperando que el usuario presione alguna tecla
 	public static void pausar() {
 		System.out.println("\n[*] PRESIONE ENTER PARA CONTINUAR.. ");
 		try {

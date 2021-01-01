@@ -9,13 +9,12 @@ package nube.comun;
 import java.io.Serializable;
 
 public class Metadatos implements Serializable{
-	
-	
-    private static int contadorUnico; // contador para los ids unicos de los ficheros
+	private static final long serialVersionUID = 1L;
+	private static int contadorUnico; // contador para los ids unicos de los ficheros
 	private int idFichero; 	// id unico del fichero 
 	private int idCliente;	// identificador del propietario de un fichero
 	private int idRepositorio; // identificador para saber en que repositorio esta el fichero  
-	private String nombre;   // nombre de un fichero 
+	private String nombre;   // nombre del fichero 
 	private long peso;	// tamaño del fichero en bytes
 	
 	// constructor de la clase metadatos
