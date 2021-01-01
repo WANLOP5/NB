@@ -79,9 +79,9 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
 			System.out.println("\n[+] SE SUBIO EL FICHERO "+ nombreFichero +
 							" DEL CLIENTE "+carpetaCliente);
 		}catch(FileNotFoundException e){
-			e.printStackTrace();
+			System.err.print("\n(ERROR) NO SE PUDO ENCONTRAR EL FICHERO");
 		}catch(IOException e) {
-			e.printStackTrace();
+			System.err.print("\n(ERROR) OCURRIO UN ERROR ESCRIBIENDO AL FICHERO");
 		}
 		
 		return true;

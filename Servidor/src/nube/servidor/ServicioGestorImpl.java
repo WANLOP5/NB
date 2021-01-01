@@ -82,7 +82,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 			servidorOperador.bajarFichero(mFichero.getNombre(), idCliente, URLDiscoCliente);
 
 		} catch (RemoteException | MalformedURLException | NotBoundException e) {
-			e.printStackTrace();
+			System.out.println("\n(ERROR) OCURRIO UN ERROR LOCALIZANDO EL SERVIDOR OPERADOR");
 			return null;
 		}
 		

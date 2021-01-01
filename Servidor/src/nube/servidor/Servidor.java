@@ -73,7 +73,6 @@ public class Servidor {
 			System.out.println("[+] SERVICIO GESTOR CORRIENDO");
 		} catch (RemoteException | MalformedURLException | NotBoundException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO GESTOR");
-			e.printStackTrace();
 			System.exit(1);
 		
 		}

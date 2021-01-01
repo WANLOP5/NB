@@ -56,7 +56,7 @@ public class Cliente {
 			System.out.println("[+] SERVICIO AUTENTICADOR LOCALIZADO EN EL SERVIDOR");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL AUTENTICADOR");
-			e.printStackTrace();
+			
 			System.exit(1);
 		}
 		
@@ -73,7 +73,7 @@ public class Cliente {
 			
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL SERVICIO GESTOR");
-			e.printStackTrace();
+			
 			System.exit(1);
 		}
 		
@@ -90,7 +90,7 @@ public class Cliente {
 			
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			System.out.println("(ERROR) OCURRIO UN ERROR LOCALIZANDO EL SERVICIO CLIENTE OPERADOR");
-			e.printStackTrace();
+			
 			System.exit(1);
 		}
 		
@@ -108,7 +108,7 @@ public class Cliente {
 			System.out.println("[+] SERVICIO DISCO CLIENTE CORRIENDO");
 		} catch (RemoteException | MalformedURLException e) {
 			System.err.println("(ERROR) OCURRIO UN ERROR INICIANDO EL SERVICIO DISCO CLIENTE");
-			e.printStackTrace();
+			
 			System.exit(1);
 		
 		}
@@ -155,7 +155,7 @@ public class Cliente {
 						
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
 					System.out.println("(ERROR) OCURRIO UN ERROR REGISTRANDO EL USUARIO");
-					e.printStackTrace();
+					
 					System.exit(1);
 				}
 				IConsola.pausar();

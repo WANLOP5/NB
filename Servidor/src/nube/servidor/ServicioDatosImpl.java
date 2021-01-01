@@ -94,7 +94,7 @@ implements ServicioDatosInterface {
 		try {
 			servidorOperador = (ServicioSrOperadorInterface) Naming.lookup(URLServidorOperador);
 		} catch(RemoteException | MalformedURLException | NotBoundException e) {
-			e.printStackTrace();
+			System.err.println("\n(ERROR) OCURRIO UN ERROR LOCALIZANDO EL SERVIDOR OPERADOR");
 		}
 	}
 	
