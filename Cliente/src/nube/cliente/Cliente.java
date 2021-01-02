@@ -236,7 +236,9 @@ public class Cliente {
 			// Si se elige la opcion subir fichero
 			// ######################################
 			case 1:
-				System.out.println("(AVISO) LOS FICHEROS A SUBIR DEBEN ESTAR EN LA MISMA CARPETA DONDE SE EJECUTA EL CLIENTE\n");
+				// Ruta donde se encuentra este ejecutable
+				String rutaEjecutable = System.getProperty("user.dir");
+				System.out.println("(AVISO) LOS FICHEROS A SUBIR DEBEN ESTAR EN "+rutaEjecutable+"\n");
 				// Pide el nombre del fichero a subir
 				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
 				
@@ -275,10 +277,20 @@ public class Cliente {
 			// ######################################	
 			case 2: 
 				try {
+					String listaFicheros = srgestor.listarFicheros(idCliente);
 					// Mostrar la lista de ficheros disponibles para bajar
-					System.out.println(srgestor.listarFicheros(idCliente));
+					System.out.println(listaFicheros);
 					// Pedir que se elija un fichero de la lista
 					int idFichero = Integer.parseInt(IConsola.pedirDato("OPCION ELEGIDA"));
+					
+					// Si el id de fichero introducido no esta en la lista de ficheros 
+					// entonces no se puede bajar el fichero
+					if(!listaFicheros.contains("" + idFichero)) {
+						System.out.println("(ERROR) INTRODUJO UN ID DE FICHERO INVALIDO");
+						IConsola.pausar();
+						IConsola.limpiarConsola();
+						break;
+					}
 					
 					// Indicarle al servicio gestor que baje el fichero
 					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLDiscoCliente);
@@ -305,9 +317,20 @@ public class Cliente {
 			// ######################################
 			case 3: 
 				try {
-					System.out.println(srgestor.listarFicheros(idCliente));
+					String listaFicheros = srgestor.listarFicheros(idCliente);
+					// Mostrar la lista de ficheros disponibles para bajar
+					System.out.println(listaFicheros);
+					// Pedir que se elija un fichero de la lista
 					int idFichero = Integer.parseInt(IConsola.pedirDato("OPCION ELEGIDA"));
 					
+					// Si el id de fichero introducido no esta en la lista de ficheros 
+					// entonces no se puede bajar el fichero
+					if(!listaFicheros.contains("" + idFichero)) {
+						System.out.println("(ERROR) INTRODUJO UN ID DE FICHERO INVALIDO");
+						IConsola.pausar();
+						IConsola.limpiarConsola();
+						break;
+					}
 					// Obtener el nombre del fichero del cliente con el ServicioGestor
 					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
 					// El nombre de la carpeta es el nombre del cliente al que le pertenece
