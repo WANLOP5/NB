@@ -17,7 +17,7 @@ public interface ServicioDatosInterface extends Remote {
 	// Devuelve los clientes con sus repositorios
 	public String listarClientesRepositorios() throws RemoteException;
 	// Devuelve los ficheros de un cliente 
-	public String[] listarFicherosCliente(int idCliente) throws RemoteException;
+	public String listarFicherosCliente(int idCliente) throws RemoteException;
 	
 	// Busca un repositorio aleatorio disponible
 	public int buscarRepositorioAleatorio() throws RemoteException;

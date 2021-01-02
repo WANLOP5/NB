@@ -112,19 +112,16 @@ implements ServicioDatosInterface {
 		return TClienteRepositorio.entrySet().toString();	
 	}
 	
-	// Devuelve un arreglo de String con la lista en String en el elemento 0 
-	// y la cantidad de ficheros en el elemento 1  
-	public String[] listarFicherosCliente(int idCliente) {
+	// Devuelve un una lista de los ficheros del cliente
+	public String listarFicherosCliente(int idCliente) {
 		String lista = "";
-		int cantidadFicheros = 0;
-		
+
 		for(int idFichero : TClienteFicheros.get(idCliente)) {
 			String nombreFichero = buscarMetadatos(idFichero).getNombre();
 			lista += idFichero + ") " + nombreFichero + "\n";
-			cantidadFicheros++;
 		}
 		
-		return new String[]{lista, ""+cantidadFicheros};
+		return lista;
 	}
 	
 	// Busca un repositorio aleatorio disponible

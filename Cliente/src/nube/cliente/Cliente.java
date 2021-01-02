@@ -211,7 +211,7 @@ public class Cliente {
 	private static boolean comprobarFichero(String URIFichero) {		
 		File ficheroDisco = new File(URIFichero);
 				
-		if(ficheroDisco.isDirectory() && !ficheroDisco.exists()) {
+		if(ficheroDisco.isDirectory() || !ficheroDisco.exists()) {
 			System.err.println("(ERROR) EL FICHERO NO EXISTE O SE INTENTO SUBIR UNA CARPETA");
 			return false;
 		}
@@ -236,11 +236,16 @@ public class Cliente {
 			// Si se elige la opcion subir fichero
 			// ######################################
 			case 1:
+				System.out.println("(AVISO) LOS FICHEROS A SUBIR DEBEN ESTAR EN LA MISMA CARPETA DONDE SE EJECUTA EL CLIENTE\n");
 				// Pide el nombre del fichero a subir
 				String URIFichero = IConsola.pedirDato("NOMBRE DEL FICHERO");
 				
 				// Comprueba que el fichero existe en el disco y no es una carpeta
-				if(!comprobarFichero(URIFichero)) break;
+				if(!comprobarFichero(URIFichero)) {
+					IConsola.pausar();
+					IConsola.limpiarConsola();
+					break;
+				}
 					
 				try {
 					Fichero nuevoFichero = new Fichero(URIFichero, ""+idCliente);
@@ -270,17 +275,10 @@ public class Cliente {
 			// ######################################	
 			case 2: 
 				try {
-					// Obtener la lista de ficheros y la cantidad de ficheros del cliente
-					String[] ficherosCliente = srgestor.listarFicheros(idCliente);
-					// listaFicheros[0] es la lista de ficheros
-					// listaFicheros[1] es la cantidad de ficheros
-					String listaFicheros = ficherosCliente[0];
-					int cantidadFicheros = Integer.parseInt(ficherosCliente[1]);
-
 					// Mostrar la lista de ficheros disponibles para bajar
-					System.out.println(listaFicheros);
+					System.out.println(srgestor.listarFicheros(idCliente));
 					// Pedir que se elija un fichero de la lista
-					int idFichero = IConsola.pedirOpcion(cantidadFicheros);
+					int idFichero = Integer.parseInt(IConsola.pedirDato("OPCION ELEGIDA"));
 					
 					// Indicarle al servicio gestor que baje el fichero
 					String nombreFichero = srgestor.bajarFichero(idFichero, idCliente, URLDiscoCliente);
@@ -292,7 +290,6 @@ public class Cliente {
 					}
 					
 					System.out.println("[+] FICHERO "+nombreFichero+" BAJADO CON EXITO");
-					break;
 					
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
@@ -308,15 +305,8 @@ public class Cliente {
 			// ######################################
 			case 3: 
 				try {
-					String[] ficherosCliente = srgestor.listarFicheros(idCliente);
-					// listaFicheros[0] es la lista de ficheros
-					// listaFicheros[1] es la cantidad de ficheros
-					String listaFicheros = ficherosCliente[0];
-					int cantidadFicheros = Integer.parseInt(ficherosCliente[1]);
-
-					// Imprimir la lista de ficheros por pantalla
-					System.out.println(listaFicheros);
-					int idFichero = IConsola.pedirOpcion(cantidadFicheros);
+					System.out.println(srgestor.listarFicheros(idCliente));
+					int idFichero = Integer.parseInt(IConsola.pedirDato("OPCION ELEGIDA"));
 					
 					// Obtener el nombre del fichero del cliente con el ServicioGestor
 					String nombreFichero = srgestor.buscarMetadatos(idFichero).getNombre();
@@ -342,7 +332,6 @@ public class Cliente {
 					
 					System.out.println("[+] FICHERO "+nombreFichero+ ", BORRADO CON EXITO DE "
 							+ "LA CARPETA DEL CLIENTE "+ idCliente);
-					break;
 					
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");
@@ -359,7 +348,7 @@ public class Cliente {
 			case 4: 
 				try {
 					// Listar los ficheros del cliente utilizando el ServicioGestor
-					String listaFicheros = srgestor.listarFicheros(idCliente)[0];
+					String listaFicheros = srgestor.listarFicheros(idCliente);
 					System.out.println(listaFicheros);
 				} catch (RemoteException e) {
 					System.err.println("(ERROR) OCURRIO UN ERROR CON EL SERVICIO GESTOR");

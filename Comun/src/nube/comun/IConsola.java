@@ -22,19 +22,8 @@ public class IConsola {
 			System.out.println((i+1) + ") " + entradas[i]);
 		}
 		
-		int opcionElegida = pedirOpcion(entradas.length);
-		
-		return opcionElegida; 
-	}
-	
-	// Metodo para limpiar la consola imprimiendo lineas vacias.
-	public static void limpiarConsola()  { 
-        for(int i = 0; i < 50; i++) System.out.println("\b");
-	}
-	
-	// Metodo para pedir al usuario elegir una opcion
-	public static int pedirOpcion(int valorMaximo) {
 		int opcionElegida = 0;
+		
 		try { 
 			do {  // Pedir opcion al usuario
 				System.out.print("\nOPCION ELEGIDA > ");
@@ -43,12 +32,18 @@ public class IConsola {
 				opcionElegida = entrada.nextInt();
 				System.out.print("\n\n");
 				
-			} while(opcionElegida < 0 && opcionElegida>valorMaximo); // Si la opcion no existe repetir 
+			} while(opcionElegida < 0 && opcionElegida>entradas.length); // Si la opcion no existe repetir 
 		}
 		catch(Exception e){ 
 			System.out.println("\n(ERROR) ELIGIENDO LA OPCION");
 		}
-		return opcionElegida;
+		
+		return opcionElegida; 
+	}
+	
+	// Metodo para limpiar la consola imprimiendo lineas vacias.
+	public static void limpiarConsola()  { 
+        for(int i = 0; i < 50; i++) System.out.println("\b");
 	}
 	
 	// Metodo para pedir un dato (en formato String) desde la consola.

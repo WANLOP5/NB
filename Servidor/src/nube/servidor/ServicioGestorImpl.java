@@ -132,7 +132,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 	}
 	
 	// Lista los ficheros del cliente pasado por parametro
-	public String[] listarFicheros(int idCliente) throws RemoteException {
+	public String listarFicheros(int idCliente) throws RemoteException {
 		return baseDatos.listarFicherosCliente(idCliente);
 	}
 
