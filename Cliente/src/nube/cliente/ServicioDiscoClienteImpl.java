@@ -27,7 +27,7 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
 		
 	}
 
-	// recibe un fichero, el uso es el que explico el profesor en el foro con un ejemplo.
+	// descarga un fichero al disco del cliente
 	@Override
 	public boolean bajarFicheroDisco(Fichero objetoFichero) throws RemoteException {
 		boolean operacionExitosa = false;
