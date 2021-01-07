@@ -54,10 +54,8 @@ public class Fichero implements Serializable{
 		peso = 0;
 		
 		try{
-			//c = new CheckedInputStream(new FileInputStream(ruta+"\\"+nombre), new CRC32());
-			c = new CheckedInputStream(new FileInputStream(ruta+File.separator+nombre), new CRC32());//se ha cambiado el separador
-			//peso = new File(ruta+"\\"+nombre).length();
-			peso = new File(ruta+File.separator+nombre).length();//se ha cambiado el separador
+			c = new CheckedInputStream(new FileInputStream(ruta+"\\"+nombre), new CRC32());
+			peso = new File(ruta+"\\"+nombre).length();
 			data=new byte[(int) this.peso];
 			while(c.read(data) >= 0) {
 		    }
@@ -83,12 +81,12 @@ public class Fichero implements Serializable{
 			cs.close();
 			if (CheckSum != this.checksum)
 			{
-				return (false);	//Falla el checksum, debera mandarse de nuevo
+				return (false);	
 			}			
 		}catch(Exception e){
 			System.err.println("\n(ERROR) NO SE PUDO ESCRIBIR AL FICHERO " + e.toString());
 		}
-		return (true); //Fichero mandado Ok
+		return (true); 
 	}
 	public String obtenerPropietario()
 	{

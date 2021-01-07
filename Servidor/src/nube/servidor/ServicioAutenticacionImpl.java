@@ -50,7 +50,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int autenticarCliente(String nombre) throws RemoteException {
-		int nuevaSesion = getSesion();
+		int nuevaSesion = obtenerNuevaSesion();
 		int identificador = baseDatos.insertarSesionCliente(nombre, nuevaSesion);
 		
 		if(identificador > 0) 
@@ -67,7 +67,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int autenticarRepositorio(String nombre) throws RemoteException {
-		int nuevaSesion = getSesion();
+		int nuevaSesion = obtenerNuevaSesion();
 		int identificador = baseDatos.insertarSesionRepositorio(nombre, nuevaSesion);
 		
 		if(identificador > 0) 
@@ -82,7 +82,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int registrarCliente(String nombre) throws RemoteException, NotBoundException, MalformedURLException {
-		int identificador = baseDatos.insertarCliente(nombre, getSesion());
+		int identificador = baseDatos.insertarCliente(nombre, obtenerNuevaSesion());
 		
 		if(identificador > 0) 
 			System.out.println("\n[+] EL CLIENTE "+nombre+
@@ -96,7 +96,7 @@ implements ServicioAutenticacionInterface {
 	 * */
 	@Override
 	public int registrarRepositorio(String nombre) throws RemoteException {
-		int identificador = baseDatos.insertarRepositorio(nombre, getSesion());
+		int identificador = baseDatos.insertarRepositorio(nombre, obtenerNuevaSesion());
 		
 		if(identificador > 0) 
 			System.out.println("\n[+] EL REPOSITORIO "+nombre+
@@ -117,7 +117,7 @@ implements ServicioAutenticacionInterface {
 	
 	
 	// devuelve el id de sesion y el contador de sesiones
-	private int getSesion() {
+	private int obtenerNuevaSesion() {
 		return sesion++;
 	}
 }
